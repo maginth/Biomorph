@@ -387,16 +387,19 @@ public class GeneDivisionLimite
 					float x = trans.tx+px*trans.fx-ppy*trans.fy;
 					float y = trans.ty+px*trans.fy+ppy*trans.fx;
 					int j = (128+(int) x+ ((128+(int) y)<<8))  & 0xffff ;
-						if (miniMap[j] != couleur) {
-							miniMap[j] = couleur;
-							int k = (int) (Math.log(trans.norme*invtaille)*invLogFactor+0.5);
-							int l = nbPoints[k]++;
-							pointsEchelle[k][2*l] = (byte) x;
-							pointsEchelle[k][2*l+1] = (byte) y;
-							pointsCouleur[k][l] = trans.color;
-							//pointsCouleur[k][l] = 541651565*couleur;
-							totalPoint++;
+					int count=10;
+						while (miniMap[j] != couleur && count-- > 0) {
+							j = (128+(int) x+ ((128+(int) y)<<8))  & 0xffff ;
+							y++;
 						}
+						miniMap[j] = couleur;
+						int k = (int) (Math.log(trans.norme*invtaille)*invLogFactor+0.5);
+						int l = nbPoints[k]++;
+						pointsEchelle[k][2*l] = (byte) x;
+						pointsEchelle[k][2*l+1] = (byte) y;
+						pointsCouleur[k][l] = trans.color;
+						//pointsCouleur[k][l] = 541651565*couleur;
+						totalPoint++;
 				} /*else {
 					int j = ((int) x+ cible.widthPixels* (int) y) & 0x7fffffff ;
 					if(j<cible.fin) {
