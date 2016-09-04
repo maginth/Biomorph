@@ -1,14 +1,14 @@
 package biomorph.test;
 
-import interfac.global.Parametres;
-
 import java.awt.Dimension;
+
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import biomorph.abstrait.Biomorph;
 import biomorph.forme2D.Biomorph2D;
+import interfac.global.Parametres;
 
 public class TestSerialisation extends JApplet {
 	

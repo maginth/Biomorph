@@ -1,13 +1,9 @@
 package biomorph.test;
 
-import interfac.util.ImageAccessible;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.LinkedList;
-
-
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -17,6 +13,7 @@ import biomorph.abstrait.Biomorph;
 import biomorph.abstrait.NoeudGene;
 import biomorph.forme2D.Biomorph2D;
 import biomorph.forme2D.Similitude;
+import interfac.util.ImageAccessible;
 
 public class TestBiomorph1 extends JApplet {
 	/**

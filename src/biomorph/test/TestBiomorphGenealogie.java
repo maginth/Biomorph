@@ -1,12 +1,12 @@
 package biomorph.test;
 
-import interfac.panel.Genealogie;
-
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+
 import biomorph.abstrait.Biomorph;
 import biomorph.abstrait.TauxMutation;
 import biomorph.forme2D.Biomorph2D;
+import interfac.panel.Genealogie;
 
 public class TestBiomorphGenealogie extends JApplet {
 	/**

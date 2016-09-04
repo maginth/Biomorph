@@ -49,7 +49,7 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 	
 	public PanelGeneticienDivision(GeneDivisionLimite gene){
 		this(gene.getIndex()[0]);
-		couleur = (gene.getNoeud()==null)? 0 : (0xffffff-0x001100*(gene.getNoeud().degre_entrant()));
+		couleur = (gene.getNoeud()==null)? 0 : blanchir(0x102110,gene.getNoeud().degre_entrant());
 		this.gene = gene;
 		couleur1 = gene.couleur1;
 		couleur2 = gene.couleur2;
@@ -72,9 +72,13 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 		color1p = new Color(blanchir(couleur1,1));
 		color2 = new Color(couleur2);
 		color2p = new Color(blanchir(couleur2,1));
-		color = new Color(couleur);
-		colorp = new Color(blanchir(couleur,1));
-		colorpp = new Color(blanchir(couleur1,3));
+		color = new Color(couleur1);
+		colorp = new Color(0xff8800);
+		if (gene == null || gene.getNoeud() == null || !gene.getNoeud().visite) {
+			colorpp = Color.DARK_GRAY;
+		} else {
+			colorpp = new Color(blanchir(couleur,0));
+		}
 	}
 	
 	static int count = 0;
@@ -203,7 +207,7 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 		else graph.setColor(color);
 			
 		graph.fillArc(xa-r/10, ya-r/10, r/5, r/5, 0, 360);
-		graph.drawArc(x1, yc-r, 2*r, 2*r, 0, 360);
+		//graph.drawArc(x1, yc-r, 2*r, 2*r, 0, 360);
 		dessineFleche(x1, yc, x2, yc, graph);
 		graph.drawArc((5*x1+x2*3)/8, yc-r/4, r/2, r/2, 0, 180);
 	}

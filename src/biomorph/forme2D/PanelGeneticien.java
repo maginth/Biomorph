@@ -1,7 +1,5 @@
 package biomorph.forme2D;
 
-import interfac.dragndrop.DragDrop;
-
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,6 +10,7 @@ import javax.swing.plaf.BorderUIResource;
 
 import biomorph.abstrait.GeneExpression;
 import biomorph.forme2D.PanelGenome.ChromPanel;
+import interfac.dragndrop.DragDrop;
 
 /**
  * Classe à implémenter par les panels représentant les gènes dans le "gène hacking"

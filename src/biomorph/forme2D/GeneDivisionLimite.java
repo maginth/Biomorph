@@ -1,6 +1,5 @@
 package biomorph.forme2D;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
 
@@ -232,14 +231,15 @@ public class GeneDivisionLimite
 	public GeneDivisionLimite(GeneDivisionLimite gen,TauxMutation X) {
 		indexChromosome1 = gen.indexChromosome1;
 		indexChromosome2 = gen.indexChromosome2;
-		indexGene1 = Biomorph.mutBool(true,X.getProbaModifStructure())? gen.indexGene1 :(char) Biomorph.alea.nextInt();
-		indexGene2 = Biomorph.mutBool(true,X.getProbaModifStructure())? gen.indexGene2 :(char) Biomorph.alea.nextInt();
+		double ps = X.getProbaModifStructure();
+		indexGene1 = Biomorph.mutBool(true,ps)? gen.indexGene1 :(char) Biomorph.alea.nextInt();
+		indexGene2 = Biomorph.mutBool(true,ps)? gen.indexGene2 :(char) Biomorph.alea.nextInt();
 		double p = X.getProbaMutation(),a = X.getAmplitudeMutation();
-		this.angle =  gen.angle + (float) (Biomorph.mutBool(true,p)? 0 : 2*Math.PI*a*(Biomorph.alea.nextFloat()-0.5));
-		sens1 = Biomorph.mutBool(gen.sens1,p*a*a*0.5);
-		sens2 = Biomorph.mutBool(gen.sens2,p*a*a*0.5);
-		direct1 = Biomorph.mutBool(gen.direct1,p*a*a*0.5);
-		direct2 = Biomorph.mutBool(gen.direct2,p*a*a*0.5);
+		this.angle =  gen.angle + (float) (Biomorph.mutBool(true,p)? 0 : Biomorph.alea.nextGaussian() * a * 3.14);
+		sens1 = Biomorph.mutBool(gen.sens1,ps);
+		sens2 = Biomorph.mutBool(gen.sens2,ps);
+		direct1 = Biomorph.mutBool(gen.direct1,ps);
+		direct2 = Biomorph.mutBool(gen.direct2,ps);
 		couleur1 = Biomorph.mutBool(true,p)? gen.couleur1 : Biomorph.alea.nextInt();
 		couleur2 = Biomorph.mutBool(true,p)? gen.couleur2 : Biomorph.alea.nextInt();
 		finalise = false;
@@ -266,7 +266,7 @@ public class GeneDivisionLimite
 	@Override 
 	public void finaliser(Biomorph biom) {
 		if (!finalise) {
-			System.out.println("FINALISE ");
+			//System.out.println("FINALISE ");
 			cible = (Biomorph2D) biom;
 			indexGene1 %= cible.genotype.get(indexChromosome1).size();
 			indexGene2 %= cible.genotype.get(indexChromosome2).size();
@@ -522,7 +522,6 @@ public class GeneDivisionLimite
 	public void optimiser() {
 
 		if (optimise) return;
-		System.out.println("Debut OPTIMISATION ");
 		
 		couleur++;
 		if (couleur == 0) 
@@ -564,7 +563,6 @@ public class GeneDivisionLimite
 		
 		optimise = true;
 		
-		//System.out.println("FIN OPTIMISATION");
 	}
 	
 	public void desoptimiser() {

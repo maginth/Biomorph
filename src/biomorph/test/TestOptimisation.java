@@ -1,7 +1,5 @@
 package biomorph.test;
 
-import interfac.util.ImageAccessible;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.LinkedList;
@@ -15,6 +13,7 @@ import biomorph.abstrait.NoeudGene;
 import biomorph.forme2D.Biomorph2D;
 import biomorph.forme2D.GeneDivisionLimite;
 import biomorph.forme2D.Similitude;
+import interfac.util.ImageAccessible;
 
 public class TestOptimisation extends JApplet {
 	

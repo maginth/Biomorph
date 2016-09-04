@@ -1,21 +1,25 @@
 package interfac.panel;
 
-import interfac.dragndrop.DragDrop;
-import interfac.dragndrop.DropAdapter;
-import interfac.global.AppletBiomorph;
-import interfac.global.Parametres;
-import interfac.util.PopUpListener;
-
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import biomorph.abstrait.Biomorph;
+import biomorph.abstrait.TauxMutation;
+import biomorph.forme2D.Biomorph2D;
 import biomorph.forme2D.IconBiomorph2D;
+import interfac.dragndrop.DragDrop;
+import interfac.dragndrop.DropAdapter;
+import interfac.global.AppletBiomorph;
+import interfac.global.Parametres;
+import interfac.util.IO;
+import interfac.util.PopUpListener;
 
 public class JpanelFavoris extends JPanel{
 	/**
@@ -26,17 +30,19 @@ public class JpanelFavoris extends JPanel{
 	private ArrayList<IconBiomorph2D> listeIcon;
 	private ArrayList<Biomorph> listeBiomorph;
 	private int tailleIcone = 70;
+	private boolean saveToFile = false; 
 	public static Biomorph biomorphEnCour ;
 	
 	public JpanelFavoris(){
-		this(null,true);
+		this(null,true, false);
 	}
 	
 	public JpanelFavoris(DropAdapter actionReceptionDrag){
-		this(actionReceptionDrag,actionReceptionDrag==null? false:true);
+		this(actionReceptionDrag,actionReceptionDrag==null? false:true, false);
 	}
 	
-	public JpanelFavoris(DropAdapter actionReceptionDrag,boolean activer){
+	public JpanelFavoris(DropAdapter actionReceptionDrag,boolean activer,final boolean saveToFile){
+		this.saveToFile = saveToFile;
 		listeIcon = new ArrayList<IconBiomorph2D>();
 		listeBiomorph = new ArrayList<Biomorph>();
 		
@@ -59,10 +65,14 @@ public class JpanelFavoris extends JPanel{
 			}
 		});
 		if (activer) {
-			if(actionReceptionDrag == null) actionReceptionDrag = new DropAdapter(this,"ajouter"){
+			if(actionReceptionDrag == null) actionReceptionDrag = new DropAdapter(this,"sauvegarder"){
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					addBiomorphFavoris((Biomorph) DragDrop.getContenuDrag());
+					Biomorph2D bio = (Biomorph2D) DragDrop.getContenuDrag();
+					if (saveToFile) {
+						saveBiomorph(bio);
+					} else
+						addBiomorph(bio);
 				}
 			};
 			actionReceptionDrag.initPan(this);
@@ -71,6 +81,32 @@ public class JpanelFavoris extends JPanel{
 		
 	}
 	
+	public void saveBiomorph(Biomorph2D bio) {
+		Biomorph previous = findByName(bio.getName());
+		if (previous == null || JOptionPane.showConfirmDialog(
+				JpanelFavoris.this,
+				"Écraser le biomorph " + bio.getName() +  " ?",
+				"",
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION ) {
+			removeBiomorph(previous);
+			Biomorph freeze = bio.duplique(new TauxMutation(0, 0, 0, 0));
+			freeze.setName(bio.getName());
+			addBiomorph(freeze);
+			IO.saveBiomorph(bio);
+		}
+	}
+	
+	private Biomorph findByName(String name) {
+		for (Biomorph bio : listeBiomorph)
+			if (bio.getName() == name)
+				return bio;
+		return null;
+	}
+	
+	public JpanelFavoris(boolean b) {
+		this(null,true, true);
+	}
+
 	/**
 	 * Ajout d'un biomorph dans l'onglet.
 	 * Si le biomorph existe et qu'il n'est pas déjà dans l'onglet, on l'ajoute dans une liste d'icônes et dans une liste de biomorph.
@@ -78,10 +114,10 @@ public class JpanelFavoris extends JPanel{
 	 * Lors de l'ajout, on ajoute à l'icône le menu, et la fonction de drag&drop.
 	 * @param bio le biomorph à ajouter.
 	 */
-	public void addBiomorphCroisement(Biomorph bio){
+	public void addBiomorph(final Biomorph bio){
 		if (bio != null){
 			if(!listeBiomorph.contains(bio)){
-				IconBiomorph2D ico = (IconBiomorph2D) bio.getIcone(tailleIcone);
+				final IconBiomorph2D ico = (IconBiomorph2D) bio.getIcone(tailleIcone);
 				listeIcon.add(ico);
 				listeBiomorph.add(bio);
 				MouseListener popupListener = new PopUpListener(ico);
@@ -92,45 +128,6 @@ public class JpanelFavoris extends JPanel{
 		}
 	}
 
-/**
- * Ajoute le biomorph dans le panel Favoris.	
- * @param bio
- */
-	public void addBiomorphFavoris(Biomorph bio){
-		if (bio != null){
-			if(!listeBiomorph.contains(bio)){
-				IconBiomorph2D ico = (IconBiomorph2D) bio.getIcone(tailleIcone);
-				listeIcon.add(ico);
-				listeBiomorph.add(bio);
-				MouseListener popupListener = new PopUpListener(ico);
-				ico.addMouseListener(popupListener);
-				DragDrop.ajouterDragable(ico, "bioPanel", ico.copie, bio);
-				add(ico);
-				if(!ico.getParent().getName().contains("favoris")){
-					removeBiomorph(ico);
-					updateUI();
-				}
-			}
-		}
-	}
-
-/**
- * Ajoute le biomorph dans le panel bibliothèque.
- * @param bio
- */
-	public void addBiomorphBiblio(Biomorph bio){
-		if (bio != null){
-			if(!listeBiomorph.contains(bio)){
-				IconBiomorph2D ico = (IconBiomorph2D) bio.getIcone(tailleIcone);
-				listeIcon.add(ico);
-				listeBiomorph.add(bio);
-				MouseListener popupListener = new PopUpListener(ico);
-				ico.addMouseListener(popupListener);
-				DragDrop.ajouterDragable(ico, "bioPanel", ico.copie, bio);
-				add(ico);
-			}
-		}
-	}
 	
 	/**
 	 * Fonction spécifique pour l'onglet croisement.
@@ -145,7 +142,7 @@ public class JpanelFavoris extends JPanel{
 		}
 		ArrayList<Biomorph> listeEnfant = Biomorph.croisementMultiple(parents,Parametres.X);
 		for(int i=0;i<listeEnfant.size();i++){
-			addBiomorphCroisement(listeEnfant.get(i));
+			addBiomorph(listeEnfant.get(i));
 		}
 		AppletBiomorph.getTabPan().setSelectedIndex(2);
 			
@@ -156,6 +153,8 @@ public class JpanelFavoris extends JPanel{
 	 * @param ico icône qui représente le biomorph.
 	 */
 	public void removeBiomorph(IconBiomorph2D ico){
+		if (saveToFile)
+			new File("save/" + ico.getBiomorph().getName()).delete();
 		listeIcon.remove(ico);
 		listeBiomorph.remove(ico.getBiomorph());
 		DragDrop.retirerDragable(ico, "bioPanel");

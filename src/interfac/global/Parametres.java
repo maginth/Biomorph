@@ -33,7 +33,7 @@ public class Parametres extends JMenu {
 /** 
  * Paramètres utilisateurs globaux de mutation 
  */	
-	public static final TauxMutation X = new TauxMutation(0.05,0.05,0.05,0.05);
+	public static final TauxMutation X = new TauxMutation(0.70,0.30,0.30,0.30);
 
 	private JSlider sProbaMutation,sprobaModifStructure,sAmplitudeMutation,sRecombinaison;
 	

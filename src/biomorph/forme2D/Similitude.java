@@ -18,14 +18,12 @@ import biomorph.abstrait.Transform;
  *
  */
 public class Similitude implements Transform<Similitude,Similitude> {
-	/**
-	 * 
-	 */
+	
 	/** norme est la norme du vecteur (fx,fy) */
 	public float tx,ty,fx,fy,norme;
 	public boolean direct;
 	public int color;
-	private Similitude suite;
+	private transient Similitude suite;
 	private static Similitude free;
 	static {
 		for (int i=0;i<50;i++) new Similitude().delet();

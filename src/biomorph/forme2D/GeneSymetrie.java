@@ -8,13 +8,13 @@ import biomorph.abstrait.NoeudGene;
 import biomorph.abstrait.TauxMutation;
 
 /**
- * Gène appelant deux fois un gène appelé gène racine, la deuxième fois la 
- * symétrie est changé dans la similitude passé en argument.
- * Ce gène construit donc la forme construite par le gène racine et sont reflet
- * par rapport à la base de la forme.
+ * Gï¿½ne appelant deux fois un gï¿½ne appelï¿½ gï¿½ne racine, la deuxiï¿½me fois la 
+ * symï¿½trie est changï¿½ dans la similitude passï¿½ en argument.
+ * Ce gï¿½ne construit donc la forme construite par le gï¿½ne racine et sont reflet
+ * par rapport ï¿½ la base de la forme.
  * 
- * Ajouter un GeneSymetrie dans le génome peut augmenter beaucoup la complexité du dessin
- * (car il n'y a pas de réduction d'échelle de la forme dessiné deux fois par le gène racine)
+ * Ajouter un GeneSymetrie dans le gï¿½nome peut augmenter beaucoup la complexitï¿½ du dessin
+ * (car il n'y a pas de rï¿½duction d'ï¿½chelle de la forme dessinï¿½ deux fois par le gï¿½ne racine)
  * 
  * @see GeneDivisionLimite
  * 
@@ -27,11 +27,11 @@ public class GeneSymetrie implements GeneExpression<Similitude>, NoeudGene.Lien 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	// les similitudes passés en paramètre au gène racine
+	// les similitudes passï¿½s en paramï¿½tre au gï¿½ne racine
 	static Similitude sim1 = new Similitude(0,0,0,1,true,0);
 	static Similitude sim2 = new Similitude(0,0,0,1,false,0);
 	
-	// l'objet NoeudGene pour déterminer la topologie du génome (et trouver les gènes à optimiser)
+	// l'objet NoeudGene pour dï¿½terminer la topologie du gï¿½nome (et trouver les gï¿½nes ï¿½ optimiser)
 	private transient NoeudGene noeud ;
 	
 	GeneExpression<Similitude> racine;
@@ -63,7 +63,7 @@ public class GeneSymetrie implements GeneExpression<Similitude>, NoeudGene.Lien 
 	@Override
 	/**
 	 * lors de la finalisation, on s'assure qu'il n'y a pas de boucle infinie avec
-	 * quand racine est aussi un Gène Symétrie;
+	 * quand racine est aussi un Gï¿½ne Symï¿½trie;
 	 */
 	public void finaliser(Biomorph destinataire) {
 		if (!finalise) {

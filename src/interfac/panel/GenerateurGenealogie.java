@@ -1,7 +1,6 @@
 package interfac.panel;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,7 +8,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
@@ -68,7 +66,7 @@ public class GenerateurGenealogie extends JPanel {
 			}
 		});
 		final JSpinner snbGeneChrom = new JSpinner();
-		snbGeneChrom.setValue(10);
+		snbGeneChrom.setValue(20);
 		snbGeneChrom.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {

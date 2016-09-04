@@ -14,7 +14,7 @@ import java.util.LinkedList;
  *
  */
 public class NoeudGene {
-	private boolean visite=false;
+	public boolean visite=false;
 	private final Lien gene;
 	private final LinkedList<NoeudGene> arcs = new LinkedList<NoeudGene>();
 	private final NoeudGene inverse;

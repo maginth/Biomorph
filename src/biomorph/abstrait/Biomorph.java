@@ -4,16 +4,16 @@ package biomorph.abstrait;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+
 import javax.swing.JComponent;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
+
+import interfac.global.AppletBiomorph;
 
 
 
@@ -21,8 +21,8 @@ import javax.swing.text.JTextComponent;
  *<p><h1><b>LA CLASSE ABSTRAITE BIOMORPH</b></h1>
  *
  * Les classes héritant de Biomorph doivent contenir toutes les donnés 
- * sur lesquels agiront leurs gènes. Ces donnés représentent le phénotype. 
- * Le génotype est une ArrayListe de tous les gènes succeptibles de s'exprimer
+ * sur lesquels agiront leurs génes. Ces donnés représentent le phénotype. 
+ * Le génotype est une ArrayListe de tous les génes succeptibles de s'exprimer
  * pour définir ce phénotype.
  * 
  * </p>
@@ -31,10 +31,10 @@ import javax.swing.text.JTextComponent;
  *Les classes du package biomorph.abstrait définissent la structure générale des
  *biomorphs, elles sont étroitement liées entre elles. Les classes héritants de 
  *cette structure devront pouvoir accéder entres elles à leurs méthodes/attribus 
- *rajouté, sans recourir sans arrêt à des "cast", d'où l'utilisation des 
+ *rajouté, sans recourir sans arrét à des "cast", d'où l'utilisation des 
  *générics < ... > qui précise les autres classes de la structure hérité. 
- *Ainsi plusieurs types très différent de biomorphs pourrons hériter de toutes
- *les fonctions de croisement,duplication,division des gènes, dessin sans 
+ *Ainsi plusieurs types trés différent de biomorphs pourrons hériter de toutes
+ *les fonctions de croisement,duplication,division des génes, dessin sans 
  *les réimplémenter totalements.
  *</p>
  * @author Mathieu Ginin
@@ -50,16 +50,16 @@ public abstract class Biomorph implements Serializable
 
 
 
-	/** générateur l'aléatoire utile pour générer des mutation et des gènes aléatoire
+	/** générateur l'aléatoire utile pour générer des mutation et des génes aléatoire
 	 * Toute les générations aléatoire doivent utiliser ce générateur, 
-	 * de manière à ce qu'en l'initialisant, les tests donnent les mêmes résultats
+	 * de maniére à ce qu'en l'initialisant, les tests donnent les mémes résultats
 	 * */
 	public static Random alea = new Random();
 	
 	
 	
 	private static int nombreTotalDeBiomorphsGeneres=0;
-	/** genotype rassemble l'ensembe des gènes de ce biomorph. 
+	/** genotype rassemble l'ensembe des génes de ce biomorph. 
 	 * <i>En principe, le génotype ne devrait pas subir de modification :
 	 * Les biomorphs sont vus comme des organismes pluricellulaires, 
 	 * la mutation d'une seule cellule n'a pas de conséquence sur le
@@ -100,15 +100,11 @@ public abstract class Biomorph implements Serializable
 		jtext.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
+				if (jtext.getParent().getParent() == AppletBiomorph.getFav()) {
+					new File("save/" + getName()).renameTo(new File("save/" + jtext.getText()));
+				}
 				setName(jtext.getText());
 			}
-		});
-		jtext.addKeyListener(new KeyAdapter(){
-			@Override
-			public void keyReleased(KeyEvent e) {
-			  if (e.getKeyCode() == KeyEvent.VK_ENTER)
-			    	setName(jtext.getText());
-			  }
 		});
 	}
 	
@@ -137,8 +133,8 @@ public abstract class Biomorph implements Serializable
 	 *
 	 * 
 	 * La méthode croisement construit un nouveau génotype à partir de copie des
-	 * gènes de ce biomorph et de son partenaire.
-	 * L'index des gènes copiés est le même que dans le génotype parent et 
+	 * génes de ce biomorph et de son partenaire.
+	 * L'index des génes copiés est le méme que dans le génotype parent et 
 	 * provient d'un parents donné avec une probabilité de 50%.
 	 * La fin du génotype parent le plus long est recopié tel quel à la suite.
 	 * 
@@ -181,7 +177,7 @@ public static <Biom extends Biomorph> ArrayList<Biom> croisementMultiple(ArrayLi
 			for (Biomorph biom : partenaires) {
 				if (biom.genotype.size()<=iChrom) fini++;
 				else if (biom.genotype.get(iChrom) != null) {
-						flag &= biom.genotype.get(iChrom).flagMutation;
+						flag |= biom.genotype.get(iChrom).flagMutation;
 						if ((current = biom.genotype.get(iChrom).size()) >maxIndex) maxIndex=current;
 					}
 				
@@ -223,9 +219,9 @@ public static <Biom extends Biomorph> ArrayList<Biom> croisementMultiple(ArrayLi
 	/**
 	 *
 	 * 
-	 * Reproduction de ce biomorph par duplication : chacun des gènes du génotype
-	 * est recopié au même emplacement dans le génotype de l'enfant. Au cours
-	 * de la copie de chaque gène, des mutations surviennents.
+	 * Reproduction de ce biomorph par duplication : chacun des génes du génotype
+	 * est recopié au méme emplacement dans le génotype de l'enfant. Au cours
+	 * de la copie de chaque géne, des mutations surviennents.
 	 * 
 	 * @param tauxMutation : nombre flotant entre 0 et 1 représentant l'intensité des mutations
 	 * @return le biomorph dupliqué avec des mutations
@@ -249,13 +245,13 @@ public static <Biom extends Biomorph> ArrayList<Biom> croisementMultiple(ArrayLi
 	 * 
 	 * 
 	 * méthode permettant le dessin d'un biomorph. 
-	 * Par défaut la méthode dessin initie l'expression des gènes par l'appel du
-	 * gène à l'index 0 dans le génotype (par appel on entend expression du gène).
- 	 * Le gène 0, que l'on appelera gène racine, pourra faire appel à d'autre gène
- 	 * du génotype, qui feront à leur tour appel à d'autre gène, et ainsi de suite.
+	 * Par défaut la méthode dessin initie l'expression des génes par l'appel du
+	 * géne à l'index 0 dans le génotype (par appel on entend expression du géne).
+ 	 * Le géne 0, que l'on appelera géne racine, pourra faire appel à d'autre géne
+ 	 * du génotype, qui feront à leur tour appel à d'autre géne, et ainsi de suite.
  	 * 
  	 * Si ce mécanisme par défaut ne convient à l'expression du génome, il suffit
- 	 * de surgarger "dessine". Par, une boucle for peut permettre aux gènes de 
+ 	 * de surgarger "dessine". Par, une boucle for peut permettre aux génes de 
  	 * s'exprimer à la chaine les uns à la suite des autres.
 	 * 
 	 * @param positionnement : Transformation qui représente le positionnement

@@ -1,26 +1,20 @@
 package biomorph.forme2D;
 
-import interfac.dragndrop.DragDrop;
-import interfac.util.ImageAccessible;
-
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.plaf.BorderUIResource;
+
+import interfac.global.AppletBiomorph;
+import interfac.util.ImageAccessible;
 
 /**
  * Construit un icone où est dessiné un biomorph avec son nom en dessous
@@ -48,17 +42,16 @@ public class IconBiomorph2D extends JPanel {
 	 */
 	static final LinkedList<int[]> pixelsDispo = new LinkedList<int[]>();
 	static final LinkedList<IconBiomorph2D> pixelsUser = new LinkedList<IconBiomorph2D>();
-	
+
 	private static FlowLayout flow;
 	static {
 		flow = new FlowLayout();
 		flow.setVgap(0);
 	}
-	private static Border border = new BorderUIResource.LineBorderUIResource(Color.black);
 
 	protected Biomorph2D biomorph;
 	public final JLabel imageLabel,copie;
-	private final JTextArea jtext;
+	public final JTextArea jtext;
 	
 	// hxl = largeur fois hauteur = nombre de pixels mininum de l'image
 	protected int largeur,hauteur,hxl;
@@ -67,37 +60,8 @@ public class IconBiomorph2D extends JPanel {
 	protected int[] pixels;
 	protected ImageAccessible image; 
 
-	protected boolean select=false;
-	LinkedList<IconBiomorph2D> listeSelect;
 	
-	public IconBiomorph2D(Biomorph2D biomorph,int large,LinkedList<IconBiomorph2D> listeSelect) {
-		this(biomorph,large);
-		this.listeSelect = listeSelect;
-		addMouseListener(new MouseAdapter(){
-			int xs=0,ys=0;
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				int dx = e.getXOnScreen()-xs, dy = e.getYOnScreen()-ys;
-				// si un drag involontaire de 20 pixels à été fait on le considère comme un click (20*20=400)
-				if(SwingUtilities.isLeftMouseButton(e) &&  dx*dx+dy*dy<400 ) {
-					if(select){
-						deselect();
-					}else{
-						select();
-					}
-				}
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if(SwingUtilities.isLeftMouseButton(e)) {
-					xs = e.getXOnScreen(); ys = e.getYOnScreen();
-				}
-			}
-		});
-	}
-	
-	
-	public IconBiomorph2D(Biomorph2D biomorph,int large) {
+	public IconBiomorph2D(final Biomorph2D biomorph,int large) {
 		this.biomorph = biomorph;
 		if (biomorph.liste_icones == null) biomorph.liste_icones = new ArrayList<IconBiomorph2D>();
 		biomorph.liste_icones.add(this);
@@ -108,7 +72,19 @@ public class IconBiomorph2D extends JPanel {
 
 		jtext = new JTextArea(biomorph.getName());
 		jtext.setFont(jtext.getFont().deriveFont(1,9f));
-		
+		jtext.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode()== KeyEvent.VK_ENTER) {
+					jtext.setText(jtext.getText().trim());
+					AppletBiomorph.app.requestFocusInWindow();
+				}
+			}
+			@Override
+			public void keyPressed(KeyEvent e) {}
+		});
 		
 		biomorph.associerNom(jtext);
 		copie = new JLabel(imageIcon);
@@ -138,14 +114,14 @@ public class IconBiomorph2D extends JPanel {
 		}
 	}
 	
-	private void initTaille() {
+	public void initTaille() {
 		freeMem();
-		hauteur = (int) (scaleY*largeur);
+		hauteur = (int) ((scaleY + 0.05)*largeur);
 		setSize(largeur,hauteur+jtext.getPreferredSize().height);
 		copie.setSize(largeur,hauteur);
 		setPreferredSize(new Dimension(largeur,hauteur+jtext.getPreferredSize().height));
 		if (largeur<tailleAfficheText) jtext.setVisible(false) ;
-		else jtext.setVisible(true) ;
+		else jtext.setVisible(true);
 	}
 	
 	/**
@@ -210,23 +186,6 @@ public class IconBiomorph2D extends JPanel {
 				}
 			}
 			super.paint(g);
-		}
-	}
-	public void deselect(){
-		if (listeSelect != null) {
-			setBorder(null);
-			listeSelect.remove(this);
-			select = false;
-			DragDrop.changerDragDefaut(this);
-		}
-	}
-	
-	public void select(){
-		if (listeSelect != null) {
-			setBorder(border);
-			listeSelect.add(this);
-			select = true;
-			DragDrop.changerObjetsDrag(this,listeSelect);
 		}
 	}
 	

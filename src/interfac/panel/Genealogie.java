@@ -1,15 +1,11 @@
 package interfac.panel;
 
-import interfac.dragndrop.DragDrop;
-import interfac.dragndrop.DropAdapter;
-import interfac.global.Parametres;
-import interfac.util.PopUpListener;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -25,11 +21,16 @@ import java.awt.geom.CubicCurve2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+
 import biomorph.abstrait.Biomorph;
 import biomorph.abstrait.Biomorph.BioGenerator;
 import biomorph.forme2D.IconBiomorph2D;
+import interfac.dragndrop.DragDrop;
+import interfac.dragndrop.DropAdapter;
+import interfac.global.Parametres;
+import interfac.util.PopUpListener;
 
 public class Genealogie extends JPanel {
 	
@@ -44,22 +45,22 @@ public class Genealogie extends JPanel {
 	private Biomorph centre;
 	
 	
-	// bouton permettant d'accÈder au menu de gÈnÈration de gÈnÈalogie
-	JLabel etoile;
+	// bouton permettant d'acc√©der au menu de g√©n√©ration de g√©n√©alogie
+	JButton etoile;
 	
 	public Genealogie(int largeur,int hauteur,int tailleIco) {
 		this.setPreferredSize(new Dimension(largeur,hauteur));
 		this.setSize(largeur,hauteur);
 		this.tailleIcone = tailleIco;
 		setLayout(null);
-		setBackground(new Color(0xeeeeff));
+		setBackground(new Color(0xddddff));
 		addComponentListener(new ComponentAdapter(){
 			@Override
 			public void componentResized(ComponentEvent e){
 				actualiser();
 			}
 		});
-		DropAdapter centrerSurBio = new DropAdapter(this,"Afficher la GÈnÈalogie"){
+		DropAdapter centrerSurBio = new DropAdapter(this,"Afficher la G√©n√©alogie"){
 			@Override
 			public void mouseReleased(MouseEvent e){
 				centrerSurBiomorph((Biomorph) DragDrop.getContenuDrag());
@@ -82,18 +83,18 @@ public class Genealogie extends JPanel {
 			}
 		});
 		final GenerateurGenealogie gengen = new GenerateurGenealogie(this);
-		etoile = new JLabel("XXX");
+		etoile = new JButton("÷ç");
+		etoile.setFont(new Font("Arial", Font.PLAIN, 30));
+		etoile.setSize(58, 58);
 		etoile.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
 				Container parent = getParent();
 				parent.remove(Genealogie.this);
-				gengen.setPreferredSize(Genealogie.this.getPreferredSize());
 				parent.add(gengen);
 			}
 		});
-		etoile.setSize(80, 30);
-		etoile.setToolTipText("gÈnÈrer un arbre gÈnÈalogique alÈatoire");
+		etoile.setToolTipText("g√©n√©rer un arbre g√©n√©alogique al√©atoire");
 		add(etoile);
 	}
 	
@@ -124,7 +125,7 @@ public class Genealogie extends JPanel {
 		
 		int[] nbEmplacements = new int[niveau.size()+1];
 		int yNiveau = yNiveauEnfant-(int)(tailleIco*1.3);
-		int yInterNiveau = yNiveauEnfant-(int)(tailleIco*0.4);
+		int yInterNiveau = yNiveauEnfant-(int)(tailleIco*0.9);
 		int yInterNiveau2 = yNiveauEnfant+(int)(tailleIco*0.1);
 		
 		LinkedList<ArrayList<Biomorph>> niveauParents = new LinkedList<ArrayList<Biomorph>>();
@@ -177,8 +178,8 @@ public class Genealogie extends JPanel {
 		
 		int[] nbEmplacements = new int[niveau.size()+1];
 		int yNiveau = yNiveauParent+(int)(tailleIco*1.3);
-		int yInterNiveau = yNiveauParent+(int)(tailleIco*0.1);
-		int yInterNiveau2 = yNiveauParent-(int)(tailleIco*0.4);
+		int yInterNiveau = yNiveauParent-(int)(tailleIco*0.1);
+		int yInterNiveau2 = yNiveauParent-(int)(tailleIco*1.1);
 		
 		LinkedList<ArrayList<Biomorph>> niveauEnfants = new LinkedList<ArrayList<Biomorph>>();
 		for (ArrayList<Biomorph> progeniture : niveau) 
@@ -244,7 +245,7 @@ public class Genealogie extends JPanel {
 		formes = new LinkedList<Shape>();
 		LinkedList<ArrayList<Biomorph>> niveau0= new LinkedList<ArrayList<Biomorph>>();
 		niveau0.add(centre.getParents());
-		//affiche la partie supÈrieur de l'arbre gÈnÈalogique (les ancËtres du biomorph)
+		//affiche la partie sup√©rieur de l'arbre g√©n√©alogique (les anc√®tres du biomorph)
 		if (centre.getParents().size()>0) {
 			afficheAncetres(niveau0,positionY,Math.min(tailleIcone,getWidth()/centre.getParents().size()));
 		}
@@ -255,7 +256,7 @@ public class Genealogie extends JPanel {
 		DragDrop.ajouterDragable(icone, "bioGenealogie",icone.copie,centre);
 		MouseListener popupListener = new PopUpListener(icone);
 		icone.addMouseListener(popupListener);
-		//affiche la partie infÈrieur de l'arbre gÈnÈalogique (les enfants du biomorph)
+		//affiche la partie inf√©rieur de l'arbre g√©n√©alogique (les enfants du biomorph)
 		if (centre.getEnfants().size()>0) {
 			niveau0.set(0, centre.getEnfants());
 			afficheProgeniture(niveau0,(int) (positionY+tailleIcone*1.3),Math.min(tailleIcone,getWidth()/centre.getEnfants().size()));

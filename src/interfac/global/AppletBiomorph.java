@@ -1,12 +1,5 @@
 package interfac.global;
 
-import interfac.dragndrop.DragDrop;
-import interfac.dragndrop.DropAdapter;
-import interfac.panel.Genealogie;
-import interfac.panel.JpanelFavoris;
-import interfac.panel.PanelLaboratoire;
-import interfac.util.ScrollVerticalLayout;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -15,14 +8,13 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 
-import javax.swing.BorderFactory;
 import javax.swing.JApplet;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -33,16 +25,20 @@ import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.BorderUIResource;
 
-import biomorph.abstrait.Biomorph;
+import biomorph.forme2D.Biomorph2D;
 import biomorph.forme2D.Biomorph2D.BiomorphStructure;
 import biomorph.forme2D.PanelGenome;
-
-import javax.swing.UIManager.*;
+import interfac.panel.Genealogie;
+import interfac.panel.JpanelFavoris;
+import interfac.panel.PanelLaboratoire;
+import interfac.util.IO;
+import interfac.util.ScrollVerticalLayout;
 
 
 
@@ -53,7 +49,8 @@ public class AppletBiomorph extends JApplet {
 	public static PanelLaboratoire panelLaboratoire;
 	private static JTabbedPane tabbedPane;
 	private static JSplitPane split1,split2,split3;
-	private static JpanelFavoris PanFavoris,panCroisement,PanBiblio;
+	private static JpanelFavoris PanFavoris,panCroisement;
+	public static AppletBiomorph app;
 
 	private static JScrollPane scrollpanelGenome;
 	public static PanelGenome panelGenome;
@@ -73,9 +70,47 @@ public class AppletBiomorph extends JApplet {
 	 * Initialise l'applet ainsi que ses composants.
 	 * 
 	 */
+	public static void main(String [] param) {
+		final AppletBiomorph app = new AppletBiomorph();
+		final JFrame win = new JFrame();
+		win.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		win.setUndecorated(true);
+		win.setContentPane(app);
+        win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		app.init();
+		win.pack();
+		win.setVisible(true);
+		//Hijack the keyboard manager
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher( new KeyEventDispatcher() {
+			boolean isOpen = false;
+			@Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+		    	if (isOpen)
+		    		return false;
+		    	isOpen = true;
+		    	if (e.getKeyCode()== KeyEvent.VK_ESCAPE &&
+					JOptionPane.showConfirmDialog(
+							app,
+							"Exit biomorph lab?",
+							"",
+							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					win.setVisible(false);
+					win.dispose();
+				}
+		    	isOpen = false;
+		        return false;
+		    }
+		});
+		app.requestFocusInWindow();
+		AppletBiomorph.app = app;
+	}
 	
 	public void init() {
 		try {
+	//		UIManager.put("nimbusBase", new Color(0xff0000));
+	//		UIManager.put("nimbusBlueGrey", new Color(0x00ff00));
+	//		UIManager.put("control", new Color(0x0000ff));
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 		        if ("Nimbus".equals(info.getName())) {
 		            UIManager.setLookAndFeel(info.getClassName());
@@ -84,12 +119,16 @@ public class AppletBiomorph extends JApplet {
 		    }
 		} catch (Exception e) {
 		}
-		/*
-		UIManager.put("nimbusBase", new Color(0xff4444));
-		UIManager.put("nimbusBlueGrey", new Color(0xffaaaa));
-		UIManager.put("control", new Color(0xffbbaa));
-		*/
-		adresse = getCodeBase();
+		setBackground(Color.DARK_GRAY);
+		UIManager.put("nimbusBase", Color.BLUE);
+		UIManager.put("nimbusBlueGrey", Color.DARK_GRAY);
+		//UIManager.put("control", Color.GRAY);
+		
+		try {
+			adresse = getCodeBase();
+		} catch(NullPointerException e) {
+			// this is not an actual applet in a browser but a java window app
+		}
 		
 		//////////////////////////////////////////////////////////
 		// construit la partie droite de la barre d'outils      //
@@ -137,7 +176,7 @@ public class AppletBiomorph extends JApplet {
 		BiomorphStructure struct = new BiomorphStructure();
 		struct.nbChrom = 1;
 		struct.nbChromHomeo = 0;
-		struct.nbGenChrom = 10;
+		struct.nbGenChrom = 20;
 		struct.symetrie = true;
 		arbre.genealogieAleatoire(struct);
 		arbre.setBorder(border);
@@ -148,47 +187,37 @@ public class AppletBiomorph extends JApplet {
 /****************************************************************************************************/		
 		
 		
-		
-		DropAdapter panBiblio = new DropAdapter("Sauvegarder"){
-			@Override public void mouseReleased(MouseEvent e){
-				if (Menu.getLog() == null) {
-					JOptionPane.showMessageDialog(null, "Veuillez vous inscrire ou vous connecter pour sauvegarder un biomorph");
-				} else {
-					Menu.BDDSauvegardeBiomorph(Menu.getLog(),(Biomorph) DragDrop.getContenuDrag());
-					super.mouseReleased(e);
-				}
-			}
-		};
+	
 		
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
         
-		PanFavoris = new JpanelFavoris();
+		PanFavoris = new JpanelFavoris(true);
 		panCroisement = new JpanelFavoris(null);
-		PanBiblio = new JpanelFavoris(panBiblio);
 		PanFavoris.setLayout(new ScrollVerticalLayout());
 		panCroisement.setLayout(new ScrollVerticalLayout());
-		PanBiblio.setLayout(new ScrollVerticalLayout());
-		PanFavoris.setBackground(new Color(0xe0daff));
-		panCroisement.setBackground(new Color(0xffe0da));
-		PanBiblio.setBackground(new Color(0xdaffe0));
+		PanFavoris.setBackground(new Color(0xa08abf));
+		panCroisement.setBackground(new Color(0x5aaf80));
 		
 		PanFavoris.setName("favoris");
 		panCroisement.setName("croisement");
-		PanBiblio.setName("biblio");
 		
-		
+		try {
+			for (Biomorph2D bio : IO.loadSavedBiomorph()) {
+				PanFavoris.addBiomorph(bio);
+			}
+		} catch(Exception e) {}
 		
 		JScrollPane scrollpane1 = new JScrollPane(PanFavoris);
 		JScrollPane scrollpane2 = new JScrollPane(panCroisement);
-		JScrollPane scrollpane3 = new JScrollPane(PanBiblio);
+		scrollpane1.setBorder(null);
+		scrollpane2.setBorder(null);
 		
 		
 		
 		tabbedPane = new JTabbedPane();
 		
 		tabbedPane.addTab( "Favoris", scrollpane1);
-		tabbedPane.addTab( "Biblio", scrollpane3);
 		tabbedPane.addTab( "Croisement", scrollpane2);
 		
 		
@@ -218,14 +247,19 @@ public class AppletBiomorph extends JApplet {
 		
 		
 		
-		this.setBackground(new Color(0xeee077));
 		split1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,tabbedPane,arbre);
+		tabbedPane.setPreferredSize(new Dimension(300,400));
+		//split1.setDividerLocation(500);
 		split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,split1,panelLaboratoire);
 		split3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,null,scrollpanelGenome);
 		split1.setOneTouchExpandable(true);
 		split2.setOneTouchExpandable(true);
 		split3.setOneTouchExpandable(true);
 		this.add(split2);
+		split1.setBorder(null);
+		split2.setBorder(null);
+		split3.setBorder(null);
+		scrollpanelGenome.setBorder(null);
 		
 		
 		fermer = new JButton("X");
@@ -233,7 +267,6 @@ public class AppletBiomorph extends JApplet {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				panelLaboratoire.remove(fermer);
-				dividerloc = split3.getDividerLocation();
 				split2.setRightComponent(panelLaboratoire);
 			}
 		});
@@ -253,16 +286,14 @@ public class AppletBiomorph extends JApplet {
 		
 		this.setSize(1100,700);
 	}
-	private static int dividerloc = 0;
 	
 	public static void open_gen_hack() {
-		panelLaboratoire.add(fermer);
-		split2.setRightComponent(split3);
-		split3.setLeftComponent(panelLaboratoire);
-		if (dividerloc == 0) {
-			split3.setDividerLocation(0.7d);
+		if (split2.getRightComponent() == panelLaboratoire) {
+			panelLaboratoire.add(fermer);
+			split2.setRightComponent(split3);
+			split3.setLeftComponent(panelLaboratoire);
+			split3.setResizeWeight(0.8d);
 		}
-		split3.setDividerLocation(dividerloc);
 	}
 	
 	private class MyDispatcher implements KeyEventDispatcher {
@@ -285,9 +316,6 @@ public class AppletBiomorph extends JApplet {
 	}
 	public static JpanelFavoris getFamille(){
 		return panCroisement;
-	}
-	public static JpanelFavoris getBiblio(){
-		return PanBiblio;
 	}
 	public static PanelLaboratoire getLab(){
 		return panelLaboratoire;

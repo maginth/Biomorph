@@ -1,14 +1,7 @@
 package interfac.panel;
 
-import interfac.dragndrop.DragDrop;
-import interfac.dragndrop.DropAdapter;
-import interfac.global.AppletBiomorph;
-import interfac.global.Parametres;
-import interfac.util.ImageAccessible;
-import interfac.util.PopUpListener;
-
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -23,15 +16,19 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.BorderUIResource;
 
 import biomorph.forme2D.Biomorph2D;
 import biomorph.forme2D.GeneDivisionLimite;
 import biomorph.forme2D.IconBiomorph2D;
-import biomorph.forme2D.PanelGenome;
 import biomorph.forme2D.Similitude;
+import interfac.dragndrop.DragDrop;
+import interfac.dragndrop.DropAdapter;
+import interfac.global.AppletBiomorph;
+import interfac.global.Parametres;
+import interfac.util.ImageAccessible;
+import interfac.util.PopUpListener;
 
 
 public class PanelLaboratoire extends JPanel{
@@ -44,7 +41,7 @@ public class PanelLaboratoire extends JPanel{
 	public static final float maxZoom =1000001, minZoom = 0.099f;
 	public static final double coefZoom = Math.pow(10,1d/16);
 	private  LinkedList<IconLaboratoire> listeIco;
-	private  LinkedList<IconBiomorph2D> listeIcoSelection = new LinkedList<IconBiomorph2D>();
+	private  LinkedList<IconLaboratoire> listeIcoSelection = new LinkedList<IconLaboratoire>();
 
 	protected ImageAccessible arrierePlan; 
 	private final JLabel arrierePlanComponent;
@@ -60,7 +57,7 @@ public class PanelLaboratoire extends JPanel{
 		// création du cadre de sélection des biomorphs
 		cadreSelection= new JPanel();
 		cadreSelection.setOpaque(false);
-		cadreSelection.setBorder(new BorderUIResource.LineBorderUIResource(Color.black));
+		cadreSelection.setBorder(new BorderUIResource.LineBorderUIResource(Color.ORANGE));
 		add(cadreSelection);
 		
 		
@@ -120,7 +117,9 @@ public class PanelLaboratoire extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e){
 			Point p = getMousePosition();
-			if (p != null) addBiomorph((Biomorph2D) DragDrop.getContenuDrag(), (int) (p.x/zoom+xVue), (int) (p.y/zoom+yVue),200);
+			if (p != null) {
+				addBiomorph((Biomorph2D) DragDrop.getContenuDrag(), (int) (p.x/zoom+xVue), (int) (p.y/zoom+yVue),200);
+			}
 		}
 	};
 	
@@ -141,7 +140,7 @@ public class PanelLaboratoire extends JPanel{
 		return ico;
 	}
 	
-	public void showHackPanel(IconLaboratoire icone){
+	public void showHackPanel(IconBiomorph2D icone){
 		AppletBiomorph.panelGenome.bricolerGenome(icone.getBiomorph());
 		AppletBiomorph.open_gen_hack();
 		AppletBiomorph.panelGenome.actualiser();
@@ -157,7 +156,8 @@ public class PanelLaboratoire extends JPanel{
 	MouseAdapter lablab = new MouseAdapter(){
 		@Override
 		public void mouseReleased(MouseEvent e){
-			setScreenIcone((IconLaboratoire) e.getComponent(),DragDrop.positionFin(e.getComponent()));
+			for (Component ico : DragDrop.getListDrag())
+				setScreenIcone((IconLaboratoire) ico,DragDrop.positionFin(ico));
 		}
 	};
 	
@@ -229,6 +229,7 @@ public class PanelLaboratoire extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e){
+			AppletBiomorph.app.requestFocusInWindow();
 			cadreSelection.setVisible(false);
 		}
 	};
@@ -276,7 +277,7 @@ public class PanelLaboratoire extends JPanel{
 	public LinkedList<IconLaboratoire> getListeIco(){
 		return listeIco;
 	}
-	public LinkedList<IconBiomorph2D> getListeIcoSelection(){
+	public LinkedList<IconLaboratoire> getListeIcoSelection(){
 		return listeIcoSelection;
 	}
 	

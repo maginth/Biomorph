@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import biomorph.forme2D.Biomorph2D;
 
 
@@ -28,6 +29,7 @@ public class Serialisation {
 	        ObjectInputStream ois = new ObjectInputStream(fichier);
 	        Biomorph2D res = (Biomorph2D) ois.readObject();
 	        biomorph = res;
+	        ois.close();
 	        System.out.println(res);
 	      } 
 	      catch (java.io.IOException e) {

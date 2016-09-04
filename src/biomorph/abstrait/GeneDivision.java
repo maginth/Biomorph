@@ -1,9 +1,5 @@
 package biomorph.abstrait;
 
-import biomorph.abstrait.Biomorph;
-import biomorph.abstrait.GeneExpression;
-import biomorph.abstrait.Transform;
-
 /**
  * 
  * <p>cette classe abstraite "GeneDivision" définie un type important de gène.

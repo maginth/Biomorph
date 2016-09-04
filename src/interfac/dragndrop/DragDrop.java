@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventListener;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
@@ -49,6 +48,7 @@ public class DragDrop {
 	static private JLayeredPane panPointeur ;
 	static private Object contenuDrag;
 	static private Component sourceDrag;
+	static private Collection<? extends Component> listeDrag;
 	static private Hashtable<String
 					,Hashtable<Component
 								,MouseAdapter>> 
@@ -131,6 +131,7 @@ public class DragDrop {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
+				DragDrop.listeDrag = listeDrag;
 				e.getComponent().addMouseMotionListener(startDrag);
 			}
 		}
@@ -179,8 +180,13 @@ public class DragDrop {
 							prop.pointFin = comp.getLocation();
 							SwingUtilities.convertPointToScreen(prop.pointFin, panPointeur);
 							if (prop.parentDepart.getLayout()==null) comp.setLocation(prop.positionDepart);
-							prop.parentDepart.add(comp,prop.indexDepart);
-						} else panPointeur.remove(comp);
+							try {
+								prop.parentDepart.add(comp,prop.indexDepart);
+							} catch(Exception except) {
+								prop.parentDepart.add(comp);
+							}
+						} else
+							panPointeur.remove(comp);
 						panPointeur.repaint(repaintRect);
 						comp.setCursor(defautCursor);
 						prop.parentDepart = null;
@@ -291,9 +297,13 @@ public class DragDrop {
 	static public Object getContenuDrag() {
 		return contenuDrag;
 	}
-	
+
 	static public Component getSourceDrag() {
 		return sourceDrag;
+	}
+	
+	static public Collection<? extends Component> getListDrag() {
+		return listeDrag;
 	}
 }
 

@@ -1,19 +1,17 @@
 package biomorph.forme2D;
 
-import interfac.util.ImageAccessible;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import biomorph.abstrait.Biomorph;
-import biomorph.abstrait.Chromosome;
 import biomorph.abstrait.GeneExpression;
 import biomorph.abstrait.Genotype;
 import biomorph.abstrait.NoeudGene;
 import biomorph.abstrait.NoeudGene.Lien;
 import biomorph.abstrait.Transform;
+import interfac.util.ImageAccessible;
 
 
 /**
@@ -56,7 +54,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	 * construit le biomorph
 	 * @param genotype génotype du biomorph
 	 */
-	protected Biomorph2D(Genotype genotype) {
+	public Biomorph2D(Genotype genotype) {
 		super(genotype);
 	}
 
@@ -69,7 +67,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	protected transient float minX,minY,maxX,maxY;
 	
 	// précision de la recherche des bords, plus precisionBord est petit, meilleur est la précision
-	protected static final float precisionBord = 0.005f;
+	protected static final float precisionBord = 0.00001f;
 	
 	// similitude combiné avec la similitude passé à la méthode dessin pour normaliser la taille du biomorph
 	protected Similitude normalisation;
@@ -109,7 +107,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	 * change l'objet graphic pour le dessin
 	 */
 	public void setGraphics(Graphics g) {
-		this.graph = (Graphics2D) g;
+		Biomorph2D.graph = (Graphics2D) g;
 	}
 	
 	/**
@@ -185,8 +183,10 @@ public class Biomorph2D extends Biomorph implements Serializable {
 
 	public void rafrechir_icons() {
 		if (liste_icones == null) return;
-		for (IconBiomorph2D ico : liste_icones) {
-			ico.repaint();
+    	for (IconBiomorph2D ico : liste_icones) {
+    		ico.initTaille();
+    		ico.revalidate();
+    		ico.repaint();
 		}
 	}
 	/*
@@ -221,7 +221,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 		for (int k=0;k<nbChromHomeo-1;k++) {
 			int maxGen = Math.min(2<<k,nbChrom);
 			for (int i=0;i<maxGen;i++){
-				biom.genotype.add(indexChrom,GeneDivisionLimite.aleatoire((char) (indexChrom+1),(char) (indexChrom+1)));	
+				biom.genotype.add(indexChrom,GeneDivisionLimite.aleatoire((char) (indexChrom+1),(char) (indexChrom+1)));
 			}
 			indexChrom++;
 		}
