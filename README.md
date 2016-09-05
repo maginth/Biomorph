@@ -9,13 +9,14 @@ Sometime the beauty of a biomorph lay in the fine details of its structure, you 
 ## App controls :
 
 Most of the action can be performed with the mouse :  
-+ drag and drop biomorph as you wish between the panels 
-+ scroll to zoom, each panel is zoomable
-+ double click a biomorph to center the genealogy tree on it
-+ in the main view, drop biomorphs on top of each other to produce offsprings
-+ middle click on a biomorph to clone it with random mutations
-+ open the contextual menu of a biomorph to access its gene hacking control panel
-+ each gene disk has fine mouse controls, watch the result live. 
+
++ drag and drop biomorph as you wish between the panels  
++ scroll to zoom, each panel is zoomable  
++ double click a biomorph to center the genealogy tree on it  
++ in the main view, drop biomorphs on top of each other to produce offsprings  
++ middle click on a biomorph to clone it with random mutations  
++ open the contextual menu of a biomorph to access its gene hacking control panel  
++ each gene disk has fine mouse controls, watch the result live.  
 
 > __when zoomed, the main view disable some control for pure exploration__
 
