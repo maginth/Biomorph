@@ -37,7 +37,7 @@ public class IconLaboratoire extends IconBiomorph2D {
 				int dx = e.getXOnScreen()-xs, dy = e.getYOnScreen()-ys;
 				// si un drag involontaire de 20 pixels à été fait on le considère comme un click (20*20=400)
 				if(SwingUtilities.isLeftMouseButton(e)) {
-					if (dx*dx+dy*dy < 400) {
+					if (dx*dx+dy*dy == 0) {
 						if(select){
 							deselect();
 						}else{
@@ -82,7 +82,15 @@ public class IconLaboratoire extends IconBiomorph2D {
 		}
 	}
 	
-	
+	@Override
+	public void paint(java.awt.Graphics g) {
+		int larg_save = largeur;
+		if (DragDrop.getListDrag() == null || !DragDrop.getListDrag().contains(this)) {
+			largeur = maxTailleIcon;
+		}
+		super.paint(g);
+		largeur = larg_save;
+	};
 	
 	@Override
 	public void supprimer(){

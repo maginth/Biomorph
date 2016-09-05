@@ -86,6 +86,7 @@ public class Genealogie extends JPanel {
 		etoile = new JButton("֍");
 		etoile.setFont(new Font("Arial", Font.PLAIN, 30));
 		etoile.setSize(58, 58);
+		etoile.setLocation(15, 15);
 		etoile.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
@@ -261,7 +262,6 @@ public class Genealogie extends JPanel {
 			niveau0.set(0, centre.getEnfants());
 			afficheProgeniture(niveau0,(int) (positionY+tailleIcone*1.3),Math.min(tailleIcone,getWidth()/centre.getEnfants().size()));
 		}
-		etoile.setLocation(12, 12);
 		revalidate();
 		repaint(100);
 	}

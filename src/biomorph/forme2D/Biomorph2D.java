@@ -67,7 +67,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	protected transient float minX,minY,maxX,maxY;
 	
 	// précision de la recherche des bords, plus precisionBord est petit, meilleur est la précision
-	protected static final float precisionBord = 0.00001f;
+	protected static final float precisionBord = 0.1f;
 	
 	// similitude combiné avec la similitude passé à la méthode dessin pour normaliser la taille du biomorph
 	protected Similitude normalisation;

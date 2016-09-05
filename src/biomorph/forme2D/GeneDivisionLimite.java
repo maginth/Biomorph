@@ -192,18 +192,7 @@ public class GeneDivisionLimite
 			float angle,
 	        boolean sens1,boolean sens2,boolean direct1,boolean direct2,
 	        int couleur1,int couleur2) {
-		this.indexChromosome1 = indexChromosome1;
-		this.indexChromosome2 = indexChromosome2;
-		this.indexGene1 = indexGene1;
-		this.indexGene2 = indexGene2;
-		this.angle =  angle;
-		this.sens1 = sens1;
-		this.sens2 = sens2;
-		this.direct1 = direct1;
-		this.direct2 = direct2;
-		this.couleur1 = couleur1;
-		this.couleur2 = couleur2;
-		finalise = false;
+		reinit(indexChromosome1, indexChromosome2, indexGene1, indexGene2, angle, sens1, sens2, direct1, direct2, couleur1, couleur2);
 	}
 	
 	public void reinit(char indexChromosome1,
@@ -266,12 +255,16 @@ public class GeneDivisionLimite
 	@Override 
 	public void finaliser(Biomorph biom) {
 		if (!finalise) {
-			//System.out.println("FINALISE ");
 			cible = (Biomorph2D) biom;
 			indexGene1 %= cible.genotype.get(indexChromosome1).size();
 			indexGene2 %= cible.genotype.get(indexChromosome2).size();
 			super.finaliser(biom);
-			float a = (float) ((angle > 0 ? 1 : -1) * (Math.abs(angle % Math.PI) % 2.9 + 0.12));
+			double a = (2 * Math.PI + (angle % (2 * Math.PI))) % (2 * Math.PI) ;
+			if (a > Math.PI)
+				a -= 2 * Math.PI;
+			double aa = Math.abs(a);
+			a =(a > 0 ? 1 : -1) * (aa < 0.1 ? 0.1 : aa > 3.04 ? 3.04 : aa);
+			//float a = (float) ((angle > 0 ? 1 : -1) * (Math.abs(angle % Math.PI) % 2.9 + 0.12));
 			px = (float) (0.5 * Math.cos(a) + 0.5); 
 			py = (float) (0.5 * Math.sin(a));
 			int c1 = transformCouleur(4,couleur1);
@@ -358,10 +351,10 @@ public class GeneDivisionLimite
 			}
 		} else {
 			if (trans.norme<Biomorph2D.precisionBord) {
-				if (trans.tx<cible.minX) cible.minX = trans.tx;
+				/*if (trans.tx<cible.minX) cible.minX = trans.tx;
 				if (trans.ty<cible.minY) cible.minY = trans.ty;
 				if (trans.tx>cible.maxX) cible.maxX = trans.tx;
-				if (trans.ty>cible.maxY) cible.maxY = trans.ty;
+				if (trans.ty>cible.maxY) cible.maxY = trans.ty;*/
 			} else {
 				Similitude transp;
 				transp = transGene1.concat(trans);
@@ -386,6 +379,7 @@ public class GeneDivisionLimite
 					float ppy = trans.direct? py:-py;
 					float x = trans.tx+px*trans.fx-ppy*trans.fy;
 					float y = trans.ty+px*trans.fy+ppy*trans.fx;
+					checkMinMax(x,y);
 					int j = (128+(int) x+ ((128+(int) y)<<8))  & 0xffff ;
 						if (miniMap[j] != couleur) {
 							miniMap[j] = couleur;
@@ -414,8 +408,6 @@ public class GeneDivisionLimite
 					transp = transGene2.concat(trans);
 					lienGene2.expression(transp);
 					transp.delet();
-				} else {
-					checkMinMax(trans.tx,trans.ty);
 				}
 				
 			}
@@ -562,7 +554,7 @@ public class GeneDivisionLimite
 		polygoneY = new float[]{y1,y2,y78,y78,y3,y4,y56,y56};
 		
 		optimise = true;
-		
+		testRect = true;
 	}
 	
 	public void desoptimiser() {

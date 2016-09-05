@@ -156,7 +156,7 @@ public class AppletBiomorph extends JApplet {
 			}
 		});
 		boutonCroisement.setToolTipText("croiser le groupe de biomorph sélectionné.\n Un groupe d'enfant sera généré par redistribution aléatoire des gènes\n");
-		spinner.setPreferredSize(new Dimension(40,20));
+		spinner.setPreferredSize(new Dimension(60,25));
 		panSpin.add(boutonCroisement);
 		JLabel description = new JLabel("             Enfants par croisement simple:");
 		panSpin.add(description);

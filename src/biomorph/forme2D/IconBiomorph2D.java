@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import interfac.global.AppletBiomorph;
 import interfac.util.ImageAccessible;
@@ -33,7 +34,7 @@ public class IconBiomorph2D extends JPanel {
 	private static int memUsed = 0;
 	private static final int maxMem = 2000000;
 	
-	public static final double minTailleIcon = 10, maxTailleIcon = 300;
+	public static final int minTailleIcon = 10, maxTailleIcon = 300;
 	public static final int tailleAfficheText = 40; // en dessous le nom n'est pas affiché
 	
 	/*
@@ -55,7 +56,7 @@ public class IconBiomorph2D extends JPanel {
 	
 	// hxl = largeur fois hauteur = nombre de pixels mininum de l'image
 	protected int largeur,hauteur,hxl;
-	float scaleY=1;
+	protected float scaleY=1;
 	protected final ImageIcon imageIcon = new ImageIcon();
 	protected int[] pixels;
 	protected ImageAccessible image; 
@@ -71,14 +72,19 @@ public class IconBiomorph2D extends JPanel {
 		//long t = System.currentTimeMillis();
 
 		jtext = new JTextArea(biomorph.getName());
-		jtext.setFont(jtext.getFont().deriveFont(1,9f));
+		jtext.putClientProperty("JComponent.sizeVariant", "mini");
+		SwingUtilities.updateComponentTreeUI(jtext);
+		//jtext.setFont(jtext.getFont().deriveFont(1,9f));
+		/* UIDefaults def = new UIDefaults();
+		  def.put("Button.contentMargins", new Insets(0,0,0,0));
+		  jtext.putClientProperty("Nimbus.Overrides", def);*/
 		jtext.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode()== KeyEvent.VK_ENTER) {
-					jtext.setText(jtext.getText().trim());
+					jtext.setText(jtext.getText().replaceAll("\n",""));
 					AppletBiomorph.app.requestFocusInWindow();
 				}
 			}
@@ -115,6 +121,7 @@ public class IconBiomorph2D extends JPanel {
 	}
 	
 	public void initTaille() {
+		imageLabel.setPreferredSize(new Dimension(largeur, (int) ((scaleY + 0.05)*largeur)));
 		freeMem();
 		hauteur = (int) ((scaleY + 0.05)*largeur);
 		setSize(largeur,hauteur+jtext.getPreferredSize().height);
@@ -122,6 +129,7 @@ public class IconBiomorph2D extends JPanel {
 		setPreferredSize(new Dimension(largeur,hauteur+jtext.getPreferredSize().height));
 		if (largeur<tailleAfficheText) jtext.setVisible(false) ;
 		else jtext.setVisible(true);
+		revalidate();
 	}
 	
 	/**
@@ -148,6 +156,7 @@ public class IconBiomorph2D extends JPanel {
 	
 	@Override public void paint(Graphics g) {
 		if (largeur<maxTailleIcon) {
+			imageLabel.setIcon(imageIcon);
 			if (biomorph.normalisation ==null) {
 				biomorph.normaliser();
 				freeMem();
@@ -181,12 +190,12 @@ public class IconBiomorph2D extends JPanel {
 					GeneDivisionLimite.testRect = false;
 					biomorph.dessine(new Similitude(largeur/2,hauteur/2,largeur,0,true,0),image);
 					imageIcon.setImage(image.getImageAWT());
-					invalidate();
-					validate();
+					revalidate();
 				}
 			}
-			super.paint(g);
-		}
+		} else 
+			imageLabel.setIcon(null);
+		super.paint(g);
 	}
 	
 	

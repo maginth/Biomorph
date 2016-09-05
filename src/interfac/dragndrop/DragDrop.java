@@ -41,18 +41,18 @@ import javax.swing.SwingUtilities;
 
 public class DragDrop {
 
-	static private Hashtable<Component,MouseAdapter> lienComposantAction;
+	static private Hashtable<Component,MouseListener> lienComposantAction;
 	static private Component focus; 
 	static private Component focusFin; 
-	static private MouseAdapter actionFocus;
+	static private MouseListener actionFocus;
 	static private JLayeredPane panPointeur ;
 	static private Object contenuDrag;
 	static private Component sourceDrag;
-	static private Collection<? extends Component> listeDrag;
+	static private Collection<? extends Component> listeDrag = null;
 	static private Hashtable<String
 					,Hashtable<Component
-								,MouseAdapter>> 
-			recepteurs = new Hashtable<String,Hashtable<Component,MouseAdapter>> (10);
+								,MouseListener>> 
+			recepteurs = new Hashtable<String,Hashtable<Component,MouseListener>> (10);
 	
 	static private Hashtable<Component,PropDrag> lienCompProp;
 	
@@ -99,7 +99,7 @@ public class DragDrop {
 				lienComposantAction = recepteurs.get(nomAction);
 				sourceDrag = e.getComponent();
 				if (lienComposantAction != null)
-					for (Entry<Component, MouseAdapter> couple : lienComposantAction.entrySet()) {
+					for (Entry<Component, MouseListener> couple : lienComposantAction.entrySet()) {
 						couple.getValue().mousePressed(e);
 					}
 				if (listeDrag != null && !listeDrag.isEmpty()) {
@@ -200,11 +200,12 @@ public class DragDrop {
 				focus = null;
 				actionFocus = null;
 				
-				
+
 				if (lienComposantAction != null)
-					for (Entry<Component, MouseAdapter> couple : lienComposantAction.entrySet()) {
-						couple.getValue().mouseClicked(e);
+					for (Entry<Component, MouseListener> couple : lienComposantAction.entrySet()) {
+							couple.getValue().mouseClicked(e);
 					}
+				DragDrop.listeDrag = null;
 			}
 		}
 	};
@@ -213,10 +214,10 @@ public class DragDrop {
 	 */
 	
 	static public void ajouterRecepteur(Component composent,MouseAdapter actions,String[] nomActions) {
-		Hashtable<Component,MouseAdapter> liste;
+		Hashtable<Component,MouseListener> liste;
 		if (nomActions == null || nomActions.length == 0) nomActions = new String[]{""};
 		for (String s : nomActions){
-			if (!recepteurs.containsKey(s)) recepteurs.put(s, liste = new Hashtable<Component,MouseAdapter>(100));
+			if (!recepteurs.containsKey(s)) recepteurs.put(s, liste = new Hashtable<Component,MouseListener>(100));
 			else liste = recepteurs.get(s);
 			liste.put(composent,actions);
 		}
@@ -252,19 +253,20 @@ public class DragDrop {
 	}
 	
 	static public void changerObjetsDrag(Component draggable,Collection<? extends Component> objetsDrag) {
-		ListenerDrag listen = getListeDrag(draggable);
+		ListenerDrag listen = getListenerDrag(draggable);
 		if (listen != null) {
 			listen.listeDrag = objetsDrag;
 		}
 	}
 	
 	static public void changerDragDefaut(Component draggable) {
-		ListenerDrag listen = getListeDrag(draggable);
+		ListenerDrag listen = getListenerDrag(draggable);
 		if (listen != null) {
 			listen.listeDrag = listen.listeDragDefaut;
 		}
 	}
-	static private ListenerDrag getListeDrag(Component draggable) {
+	
+	static private ListenerDrag getListenerDrag(Component draggable) {
 		for (MouseListener listen : draggable.getMouseListeners()) {
 			if (listen instanceof ListenerDrag) {
 				return (ListenerDrag) listen;

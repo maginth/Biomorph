@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import biomorph.abstrait.Biomorph;
 import biomorph.abstrait.TauxMutation;
@@ -45,6 +46,7 @@ public class JpanelFavoris extends JPanel{
 		this.saveToFile = saveToFile;
 		listeIcon = new ArrayList<IconBiomorph2D>();
 		listeBiomorph = new ArrayList<Biomorph>();
+		setBorder(new EmptyBorder(15, 0, 0, 0));
 		
 		addMouseWheelListener(new MouseWheelListener(){
 			int count =0;
@@ -65,7 +67,7 @@ public class JpanelFavoris extends JPanel{
 			}
 		});
 		if (activer) {
-			if(actionReceptionDrag == null) actionReceptionDrag = new DropAdapter(this,"sauvegarder"){
+			if(actionReceptionDrag == null) actionReceptionDrag = new DropAdapter(this,"Sauvegarder"){
 				@Override
 				public void mouseReleased(MouseEvent e) {
 					Biomorph2D bio = (Biomorph2D) DragDrop.getContenuDrag();

@@ -69,7 +69,7 @@ public class PopUpListener extends MouseAdapter{
 			public void actionPerformed(ActionEvent arg0){
 				if(icone.getParent().toString().contains("PanelLaboratoire")){
 					((IconLaboratoire) icone).supprimer();
-					AppletBiomorph.getLab().updateUI();
+					AppletBiomorph.getLab().actualiserVue();
 				}
 				else if(icone.getParent().toString().contains("JpanelFavoris")){
 					if(icone.getParent().getName().contains("croisement")){
@@ -115,7 +115,8 @@ public class PopUpListener extends MouseAdapter{
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) AppletBiomorph.getArbre().centrerSurBiomorph(iconeBiomorph.getBiomorph());
+		if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e))
+			AppletBiomorph.getArbre().centrerSurBiomorph(iconeBiomorph.getBiomorph());
 	}
 	
 }

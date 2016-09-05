@@ -1,6 +1,8 @@
 package interfac.dragndrop;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -13,16 +15,20 @@ import javax.swing.border.TitledBorder;
 public class DropAdapter extends MouseAdapter {
 	private JPanel dropPan;
 	private Border defautBorder = null;
+	private TitledBorder title;
 	private Color defautBackGround = null;
-	private String message;
 	
+	@SuppressWarnings("serial")
 	public DropAdapter (JPanel dropPan,String message) {
 		this.dropPan = dropPan;
-		this.message = message;
-	}
-	
-	public DropAdapter (String message) {
-		this.message = message;
+		title = new TitledBorder(message){
+		    Insets overridenInset = new Insets(15, 0, 0, 0);
+		    @Override
+		    public Insets getBorderInsets(Component c) {
+		        return overridenInset;
+		    }
+		};
+		title.setTitleJustification(TitledBorder.CENTER);
 	}
 	
 	public void initPan(JPanel dropPan){
@@ -32,7 +38,7 @@ public class DropAdapter extends MouseAdapter {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		defautBorder = dropPan.getBorder();
-		dropPan.setBorder(new TitledBorder(message));
+		dropPan.setBorder(title);
 	}
 	
 	@Override

@@ -133,10 +133,9 @@ public class PanelLaboratoire extends JPanel{
 		DragDrop.ajouterRecepteur(ico, reproductionLab, new String[]{"bioLab"});
 		ico.x = x-taille/2;
 		ico.y = y-taille/2;
-		add(ico,0);
 		listeIco.addFirst(ico);
-		
-		actualiserVue();
+		add(ico,0);
+		drawBiomorphIcon(ico);
 		return ico;
 	}
 	
@@ -150,14 +149,24 @@ public class PanelLaboratoire extends JPanel{
 		SwingUtilities.convertPointFromScreen(positionScreen,PanelLaboratoire.this);
 		ico.x =(int) (positionScreen.x/zoom+xVue);
 		ico.y =(int) (positionScreen.y/zoom+yVue);
-		actualiserVue();
 	}
 	
 	MouseAdapter lablab = new MouseAdapter(){
 		@Override
+		public void mousePressed(MouseEvent e) {
+			actualiserVue();
+		}
+		@Override
 		public void mouseReleased(MouseEvent e){
 			for (Component ico : DragDrop.getListDrag())
 				setScreenIcone((IconLaboratoire) ico,DragDrop.positionFin(ico));
+		}
+		@Override
+		public void mouseClicked(MouseEvent e){
+			GeneDivisionLimite.testRect = true;
+			if (DragDrop.getListDrag() != null)
+				for (Component ico : DragDrop.getListDrag())
+					drawBiomorphIcon((IconLaboratoire) ico);
 		}
 	};
 	
@@ -165,6 +174,7 @@ public class PanelLaboratoire extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e){
 			setScreenIcone((IconLaboratoire) e.getComponent(),DragDrop.positionFin(e.getComponent()));
+			drawBiomorphIcon((IconLaboratoire) e.getComponent());
 			IconLaboratoire cible = (IconLaboratoire) DragDrop.focusFin();
 			IconLaboratoire source = (IconLaboratoire) DragDrop.getSourceDrag();
 			if (Math.abs(cible.x-source.x)<20 && Math.abs(cible.y-source.y)<100) {
@@ -177,7 +187,6 @@ public class PanelLaboratoire extends JPanel{
 					addBiomorph(enfant, (int) (cible.x+(100+tour*200)*Math.cos(2*Math.PI*tour)),
 										(int) (cible.y+(100+tour*200)*Math.sin(2*Math.PI*tour)), 0);
 				}
-				actualiserVue();
 			}
 		}
 	};
@@ -234,7 +243,15 @@ public class PanelLaboratoire extends JPanel{
 		}
 	};
 	
-	
+	public void drawBiomorphIcon(IconLaboratoire ico) {
+		int xscreenIco = (int) ((ico.x-xVue)*zoom), yscreenIco = (int) ((ico.y-yVue)*zoom);
+		ico.setLocation(xscreenIco,yscreenIco);
+		ico.changerTaille((int) (ico.taille*zoom));
+		if (ico.largeur()>IconBiomorph2D.maxTailleIcon) {
+			ico.setVisible(false);
+		} else ico.setVisible(true);
+		ico.getBiomorph().dessine(new Similitude(xscreenIco+ico.largeur()/2,yscreenIco+ico.hauteur()/2,ico.largeur(),0,true,0),arrierePlan);
+	}
 	
 	public void actualiserVue() {
 				
@@ -247,13 +264,8 @@ public class PanelLaboratoire extends JPanel{
 		GeneDivisionLimite.ym = 0;
 		GeneDivisionLimite.yM = getHeight();
 		for (IconLaboratoire ico : listeIco) {
-			int xscreenIco = (int) ((ico.x-xVue)*zoom), yscreenIco = (int) ((ico.y-yVue)*zoom);
-			ico.setLocation(xscreenIco,yscreenIco);
-			ico.changerTaille((int) (ico.taille*zoom));
-			if (ico.largeur()>IconBiomorph2D.maxTailleIcon) {
-				ico.setVisible(false);
-				ico.getBiomorph().dessine(new Similitude(xscreenIco+ico.largeur()/2,yscreenIco+ico.hauteur()/2,ico.largeur(),0,true,0),arrierePlan);
-			} else ico.setVisible(true);
+			if (DragDrop.getListDrag() == null || !DragDrop.getListDrag().contains(ico))
+				drawBiomorphIcon(ico);
 		}
 		arrierePlanComponent.repaint();
 		/*int i,j,jh,jj,zp = (int) (10/zoom);
