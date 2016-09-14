@@ -50,8 +50,8 @@ public class DropAdapter extends MouseAdapter {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		defautBackGround = dropPan.getBackground();
-		int rgb = defautBackGround.getRGB();
-		dropPan.setBackground(new Color((rgb & 0xfefefe)/2 + 0x7f7f7f));
+		int rgb = defautBackGround.getRGB() & 0xf8f8f8;
+		dropPan.setBackground(new Color(rgb/2 + rgb/4 + rgb/8 + 0x1f1f1f));
 	}
 
 	@Override

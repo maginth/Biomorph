@@ -30,13 +30,14 @@ public class IconLaboratoire extends IconBiomorph2D {
 		this.lab = lab;
 		this.listeSelect = lab.getListeIcoSelection();
 		this.currentClones = new LinkedList<IconLaboratoire>();
+		
 		addMouseListener(new MouseAdapter(){
 			int xs=0,ys=0;
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				int dx = e.getXOnScreen()-xs, dy = e.getYOnScreen()-ys;
 				// si un drag involontaire de 20 pixels à été fait on le considère comme un click (20*20=400)
-				if(SwingUtilities.isLeftMouseButton(e)) {
+				if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
 					if (dx*dx+dy*dy == 0) {
 						if(select){
 							deselect();
@@ -84,6 +85,7 @@ public class IconLaboratoire extends IconBiomorph2D {
 	
 	@Override
 	public void paint(java.awt.Graphics g) {
+		jtext.setVisible(lab.jtextVisible);
 		int larg_save = largeur;
 		if (DragDrop.getListDrag() == null || !DragDrop.getListDrag().contains(this)) {
 			largeur = maxTailleIcon;

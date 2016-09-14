@@ -18,6 +18,7 @@ import javax.swing.JPopupMenu;
 import biomorph.abstrait.Chromosome;
 import biomorph.abstrait.GeneExpression;
 import interfac.global.AppletBiomorph;
+import interfac.util.ColorPicker;
 
 public class PanelGenome extends JPanel {
 	
@@ -28,7 +29,7 @@ public class PanelGenome extends JPanel {
 	
 	public Biomorph2D biomorph;
 	//public PanelLaboratoire lab;
-	private ArrayList<ChromPanel> listeChrom = new ArrayList<ChromPanel>(maxChromosome);
+	ArrayList<ChromPanel> listeChrom = new ArrayList<ChromPanel>(maxChromosome);
 	int nombreChromosomes;
 	//final JButton fermer;
 	
@@ -57,8 +58,8 @@ public class PanelGenome extends JPanel {
 		});
 		add(fermer);*/
 		
-		for (int i=0; i<maxChromosome;i++) listeChrom.add(new ChromPanel(i));
-			
+		for (int i=0; i<maxChromosome;i++)
+			listeChrom.add(new ChromPanel(i));
 	}
 	
 	
@@ -68,13 +69,16 @@ public class PanelGenome extends JPanel {
 	
 	public void bricolerGenome(Biomorph2D bio) {
 		
+		if (ColorPicker.colorPicker.callback != null)
+			ColorPicker.colorPicker.callback.rightClick();
 		this.biomorph = bio;
 		for (ChromPanel chrom : listeChrom) {
 			for(PanelGeneticien p : chrom.listeGene) {
 				remove(p);
 				p.supprimer();
 			}
-			while(chrom.listeGene.size()>0) chrom.listeGene.remove(0);
+			while(chrom.listeGene.size()>0)
+				chrom.listeGene.remove(0);
 		}
 		setVisible(true);
 		nombreChromosomes = biomorph.genotype.size();
@@ -88,9 +92,17 @@ public class PanelGenome extends JPanel {
 			pan.flag = chromosome.flagMutation;
 			index++;
 		}
+
+		for (ChromPanel chrom : listeChrom)
+			for (PanelGeneticien pan : chrom.listeGene)
+				if (pan instanceof PanelGeneticienDivision) {
+					PanelGeneticienDivision p = (PanelGeneticienDivision)pan;
+					p.panLink = new PanelGeneticienDivision[]{
+						p.getPanAt(p.gene.indexChromosome1, p.gene.indexGene1),
+						p.getPanAt(p.gene.indexChromosome2, p.gene.indexGene2)
+					};
+				}
 	}
-	
-	
 	
 	public void actualiser() {
 		if (getWidth() > 100) {

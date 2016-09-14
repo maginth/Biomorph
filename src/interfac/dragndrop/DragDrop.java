@@ -4,7 +4,6 @@ package interfac.dragndrop;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -86,9 +85,6 @@ public class DragDrop {
 			this.contenuTransfert =contenuTransfert;
 		}
 		
-		static Cursor moveCursor = new Cursor(Cursor.MOVE_CURSOR);
-		static Cursor defautCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-		
 		private MouseAdapter startDrag = new MouseAdapter(){
 			@Override
 			public void mouseDragged(MouseEvent e) {
@@ -119,7 +115,6 @@ public class DragDrop {
 						lienCompProp.put(comp, prop);
 						panPointeur.add(comp);
 						panPointeur.setLayer(comp,JLayeredPane.DRAG_LAYER );
-						comp.setCursor(moveCursor);
 						
 						if (m!=null) comp.setLocation(m.x-prop.p0.x,m.y-prop.p0.y);
 					}
@@ -188,7 +183,6 @@ public class DragDrop {
 						} else
 							panPointeur.remove(comp);
 						panPointeur.repaint(repaintRect);
-						comp.setCursor(defautCursor);
 						prop.parentDepart = null;
 					}
 				}

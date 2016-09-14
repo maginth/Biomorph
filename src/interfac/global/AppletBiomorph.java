@@ -119,9 +119,8 @@ public class AppletBiomorph extends JApplet {
 		    }
 		} catch (Exception e) {
 		}
-		setBackground(Color.DARK_GRAY);
 		UIManager.put("nimbusBase", Color.BLUE);
-		UIManager.put("nimbusBlueGrey", Color.DARK_GRAY);
+		UIManager.put("nimbusBlueGrey", Color.GRAY);
 		//UIManager.put("control", Color.GRAY);
 		
 		try {
@@ -150,9 +149,9 @@ public class AppletBiomorph extends JApplet {
 		JButton boutonCroisement = new JButton("Croisement Multiple");
 		boutonCroisement.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){
-				AppletBiomorph.getFamille().viderTotalement();
-				AppletBiomorph.getFamille().addCroisement();
-				AppletBiomorph.getFamille().updateUI();
+				panCroisement.viderTotalement();
+				panCroisement.addCroisement();
+				panCroisement.revalidate();
 			}
 		});
 		boutonCroisement.setToolTipText("croiser le groupe de biomorph sélectionné.\n Un groupe d'enfant sera généré par redistribution aléatoire des gènes\n");
@@ -171,7 +170,7 @@ public class AppletBiomorph extends JApplet {
 		// fin construction partie droite de la barre d'outils  //
 		//////////////////////////////////////////////////////////
 	
-		panelLaboratoire.setBackground(Color.black);
+		panelLaboratoire.setBackground(new Color(0x0a0010));
 		arbre = new Genealogie(400,400,75);
 		BiomorphStructure struct = new BiomorphStructure();
 		struct.nbChrom = 1;
@@ -197,7 +196,7 @@ public class AppletBiomorph extends JApplet {
 		PanFavoris.setLayout(new ScrollVerticalLayout());
 		panCroisement.setLayout(new ScrollVerticalLayout());
 		PanFavoris.setBackground(new Color(0xa08abf));
-		panCroisement.setBackground(new Color(0x5aaf80));
+		panCroisement.setBackground(new Color(0x5c87cf));
 		
 		PanFavoris.setName("favoris");
 		panCroisement.setName("croisement");

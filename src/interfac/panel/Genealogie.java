@@ -21,6 +21,7 @@ import java.awt.geom.CubicCurve2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -30,6 +31,7 @@ import biomorph.forme2D.IconBiomorph2D;
 import interfac.dragndrop.DragDrop;
 import interfac.dragndrop.DropAdapter;
 import interfac.global.Parametres;
+import interfac.util.Curs;
 import interfac.util.PopUpListener;
 
 public class Genealogie extends JPanel {
@@ -46,7 +48,7 @@ public class Genealogie extends JPanel {
 	
 	
 	// bouton permettant d'accéder au menu de génération de généalogie
-	JButton etoile;
+	JButton spiral;
 	
 	public Genealogie(int largeur,int hauteur,int tailleIco) {
 		this.setPreferredSize(new Dimension(largeur,hauteur));
@@ -83,20 +85,20 @@ public class Genealogie extends JPanel {
 			}
 		});
 		final GenerateurGenealogie gengen = new GenerateurGenealogie(this);
-		etoile = new JButton("֍");
-		etoile.setFont(new Font("Arial", Font.PLAIN, 30));
-		etoile.setSize(58, 58);
-		etoile.setLocation(15, 15);
-		etoile.addMouseListener(new MouseAdapter(){
+		spiral = new JButton(new ImageIcon(Curs.class.getClassLoader().getResource("asset/spiral.png")));
+		spiral.setFont(new Font("Arial", Font.PLAIN, 30));
+		spiral.setSize(50, 50);
+		spiral.setLocation(15, 15);
+		spiral.addMouseListener(new MouseAdapter(){
 			@Override
-			public void mousePressed(MouseEvent e){
+			public void mouseReleased(MouseEvent e){
 				Container parent = getParent();
 				parent.remove(Genealogie.this);
 				parent.add(gengen);
 			}
 		});
-		etoile.setToolTipText("générer un arbre généalogique aléatoire");
-		add(etoile);
+		spiral.setToolTipText("générer un arbre généalogique aléatoire");
+		add(spiral);
 	}
 	
 

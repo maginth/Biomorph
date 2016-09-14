@@ -38,6 +38,8 @@ public class Genotype extends ArrayList<Chromosome> implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	public <G extends GeneExpression<?>> G get(int indexChromosome,int indexGene) {
+		if (indexChromosome >= size())
+			return null;
 		int len = get(indexChromosome).size();
 		return (G) get(indexChromosome).get(indexGene % len);
 	}

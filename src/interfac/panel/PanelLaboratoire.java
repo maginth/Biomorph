@@ -47,6 +47,8 @@ public class PanelLaboratoire extends JPanel{
 	private final JLabel arrierePlanComponent;
 	private final ImageIcon arrierePlanIcon;
 	private static final Pattern zoomRegex = Pattern.compile("(0\\.0*[1-9]{1,2})|(.\\.[^0])|([1-9][0-9]*)");
+
+	public boolean jtextVisible = true;
 	JPanel cadreSelection; 
 	
 	public PanelLaboratoire() {
@@ -97,7 +99,7 @@ public class PanelLaboratoire extends JPanel{
 					count = 0;
 					Matcher match = zoomRegex.matcher(Double.toString(zoom*1.0000001d));
 					match.find();
-					System.out.println("ZOOM "+match.group());
+					//System.out.println("ZOOM "+match.group());
 				}
 			}
 		});
@@ -110,6 +112,7 @@ public class PanelLaboratoire extends JPanel{
 				arrierePlan = new ImageAccessible(getWidth()+100,getHeight()+100);
 				arrierePlanIcon.setImage(arrierePlan.getImageAWT());
 				arrierePlanComponent.setSize(getWidth()+100,getHeight()+100);
+				actualiserVue();
 			}
 		}
 	}
@@ -190,12 +193,13 @@ public class PanelLaboratoire extends JPanel{
 			}
 		}
 	};
-	
+
 	
 	MouseAdapter vueLab = new MouseAdapter(){
 		private Point p0;
 		private float xVue0,yVue0;
 		private int x0,y0;
+		boolean noDragRightClick;
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -203,6 +207,7 @@ public class PanelLaboratoire extends JPanel{
 				p0 = e.getLocationOnScreen();
 				xVue0=xVue;yVue0=yVue;
 			} else if(SwingUtilities.isRightMouseButton(e)){
+				noDragRightClick = true;
 				deselectTout();
 				x0 = e.getX(); y0 = e.getY();
 				cadreSelection.setLocation(x0,y0);
@@ -212,6 +217,7 @@ public class PanelLaboratoire extends JPanel{
 		}
 		@Override
 		public void mouseDragged(MouseEvent e) {
+			noDragRightClick = false;
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				Point p = e.getLocationOnScreen();
 				xVue = (float) (xVue0 - (p.x-p0.x)/zoom);
@@ -240,6 +246,11 @@ public class PanelLaboratoire extends JPanel{
 		public void mouseReleased(MouseEvent e){
 			AppletBiomorph.app.requestFocusInWindow();
 			cadreSelection.setVisible(false);
+			if (noDragRightClick) {
+				noDragRightClick = false;
+				jtextVisible = !jtextVisible;
+				repaint(100);
+			}
 		}
 	};
 	
@@ -251,6 +262,7 @@ public class PanelLaboratoire extends JPanel{
 			ico.setVisible(false);
 		} else ico.setVisible(true);
 		ico.getBiomorph().dessine(new Similitude(xscreenIco+ico.largeur()/2,yscreenIco+ico.hauteur()/2,ico.largeur(),0,true,0),arrierePlan);
+		//System.out.println("collision " + (GeneDivisionLimite.collision * 1.0 / GeneDivisionLimite.black_pixel));
 	}
 	
 	public void actualiserVue() {

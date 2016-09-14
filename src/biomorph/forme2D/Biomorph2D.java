@@ -67,7 +67,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	protected transient float minX,minY,maxX,maxY;
 	
 	// précision de la recherche des bords, plus precisionBord est petit, meilleur est la précision
-	protected static final float precisionBord = 0.1f;
+	protected static final float precisionBord = 0.01f;
 	
 	// similitude combiné avec la similitude passé à la méthode dessin pour normaliser la taille du biomorph
 	protected Similitude normalisation;
@@ -81,7 +81,7 @@ public class Biomorph2D extends Biomorph implements Serializable {
 	 */
 	protected void normaliser() {
 		//long t = System.currentTimeMillis();
-		System.out.print("NORMALISATION !\n");
+		//System.out.print("NORMALISATION !\n");
 		GeneExpression<Similitude> racine = genotype.get(chromosomeRacine,0);
 		NoeudGene.optimiserGraph((Lien) racine);
 		
@@ -90,6 +90,10 @@ public class Biomorph2D extends Biomorph implements Serializable {
 		//t = System.currentTimeMillis();
 		minX=0;minY=0;maxX=0;maxY=0;
 		racine.trouverLesBords(new Similitude(0,0,1,0,true,0));
+		minX -= precisionBord;
+		minY -= precisionBord;
+		maxX += precisionBord;
+		maxY += precisionBord;
 		
 		//System.out.println("trouver bords :"+(System.currentTimeMillis()-t)+" ms");
 		

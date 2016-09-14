@@ -20,7 +20,6 @@ public class Chromosome extends ArrayList<GeneExpression<?>> {
 	}
 	
 	private void setTauxMutation(TauxMutation X, int n){
-		System.out.println("FLAG "+ (int)flagMutation);
 		if (X == null) this.X = null;
 		else this.X = new TauxMutation( 
 				((flagMutation & 1) ==1)? 0:1 - Math.pow(1 - X.getProbaMutation(), 1.0 / (2 * n)),

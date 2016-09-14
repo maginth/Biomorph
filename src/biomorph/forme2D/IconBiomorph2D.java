@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -15,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import interfac.global.AppletBiomorph;
+import interfac.util.Curs;
 import interfac.util.ImageAccessible;
 
 /**
@@ -30,7 +33,7 @@ public class IconBiomorph2D extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static int totalMem = 0;
+	//private static int totalMem = 0;
 	private static int memUsed = 0;
 	private static final int maxMem = 2000000;
 	
@@ -59,11 +62,22 @@ public class IconBiomorph2D extends JPanel {
 	protected float scaleY=1;
 	protected final ImageIcon imageIcon = new ImageIcon();
 	protected int[] pixels;
-	protected ImageAccessible image; 
+	protected ImageAccessible image;
 
 	
 	public IconBiomorph2D(final Biomorph2D biomorph,int large) {
 		this.biomorph = biomorph;
+		setCursor(Curs.open_hand);
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				setCursor(Curs.closed_hand);
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				setCursor(Curs.open_hand);
+			}
+		});
 		if (biomorph.liste_icones == null) biomorph.liste_icones = new ArrayList<IconBiomorph2D>();
 		biomorph.liste_icones.add(this);
 		
@@ -94,6 +108,7 @@ public class IconBiomorph2D extends JPanel {
 		
 		biomorph.associerNom(jtext);
 		copie = new JLabel(imageIcon);
+		copie.setCursor(Curs.closed_hand);
 		imageLabel= new JLabel(imageIcon);
 		changerTaille(large);
 		add(imageLabel);
@@ -121,14 +136,14 @@ public class IconBiomorph2D extends JPanel {
 	}
 	
 	public void initTaille() {
-		imageLabel.setPreferredSize(new Dimension(largeur, (int) ((scaleY + 0.05)*largeur)));
 		freeMem();
 		hauteur = (int) ((scaleY + 0.05)*largeur);
-		setSize(largeur,hauteur+jtext.getPreferredSize().height);
+		imageLabel.setPreferredSize(new Dimension(largeur, hauteur));
+		setSize(largeur,hauteur+ (largeur<tailleAfficheText ? 0 : jtext.getPreferredSize().height));
 		copie.setSize(largeur,hauteur);
 		setPreferredSize(new Dimension(largeur,hauteur+jtext.getPreferredSize().height));
-		if (largeur<tailleAfficheText) jtext.setVisible(false) ;
-		else jtext.setVisible(true);
+		if (largeur<tailleAfficheText) remove(jtext) ;
+		else add(jtext);
 		revalidate();
 	}
 	
@@ -156,7 +171,8 @@ public class IconBiomorph2D extends JPanel {
 	
 	@Override public void paint(Graphics g) {
 		if (largeur<maxTailleIcon) {
-			imageLabel.setIcon(imageIcon);
+			if (imageLabel.getIcon() != imageIcon)
+				imageLabel.setIcon(imageIcon);
 			if (biomorph.normalisation ==null) {
 				biomorph.normaliser();
 				freeMem();
@@ -176,9 +192,9 @@ public class IconBiomorph2D extends JPanel {
 					}
 				}
 				if (pixels==null) {
-					totalMem += hxl;
+					//totalMem += hxl;
 					pixels = new int[hxl] ;
-					System.out.println("totalMem  "+totalMem);
+					//System.out.println("totalMem  "+totalMem);
 				}
 				memUsed += pixels.length;
 				pixelsUser.addLast(this);
@@ -206,8 +222,6 @@ public class IconBiomorph2D extends JPanel {
 	public void supprimer() {
 		freeMem();
 		if (image != null) image.delet();
-		System.out.println(biomorph);
-		System.out.println(biomorph.liste_icones);
 		biomorph.liste_icones.remove(this);
 		biomorph = null;
 	}

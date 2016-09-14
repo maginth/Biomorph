@@ -7,7 +7,6 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.JComponent;
@@ -164,10 +163,12 @@ public abstract class Biomorph implements Serializable
 
 public static <Biom extends Biomorph> ArrayList<Biom> croisementMultiple(ArrayList<Biom> partenaires,TauxMutation X) {
 		
-		if (partenaires == null) return null;
+		if (partenaires == null)
+			return null;
 		ArrayList<Biom> enfants = new ArrayList<Biom>(partenaires.size());
-		for (int i=0;i<partenaires.size();i++) enfants.add((Biom) partenaires.get(i).obtenirEnfant(new Genotype(partenaires.get(0).genotype.size())));
-		LinkedList<Integer> indexRestants;
+		for (int i=0;i<partenaires.size();i++)
+			enfants.add((Biom) partenaires.get(i).obtenirEnfant(new Genotype(partenaires.get(0).genotype.size())));
+		int[] indexRestants;
 		
 		int iChrom,current,fini=0,maxIndex=0;
 		for (iChrom=0;;iChrom++) {
@@ -178,29 +179,33 @@ public static <Biom extends Biomorph> ArrayList<Biom> croisementMultiple(ArrayLi
 				if (biom.genotype.size()<=iChrom) fini++;
 				else if (biom.genotype.get(iChrom) != null) {
 						flag |= biom.genotype.get(iChrom).flagMutation;
-						if ((current = biom.genotype.get(iChrom).size()) >maxIndex) maxIndex=current;
+						if ((current = biom.genotype.get(iChrom).size()) >maxIndex)
+							maxIndex=current;
 					}
 				
 			}
 			
 			if (fini<partenaires.size()){
-				for (Biomorph enfant :enfants) enfant.genotype.add(new Chromosome(maxIndex,X,flag));
+				for (Biomorph enfant :enfants)
+					enfant.genotype.add(new Chromosome(maxIndex,X,flag));
 				int j,iGen,jGen;
 				GeneExpression<?> gene;
 				indexRestants = null;
 				for (iGen=0;iGen<maxIndex;iGen++) {
 					if (indexRestants == null || mutBool(false,X.getProbaRecombinaison())) {
-						indexRestants = new LinkedList<Integer>(); 
+						indexRestants = new int[partenaires.size()]; 
 						for (j=0;j<partenaires.size();j++) {
 							int k = Biomorph.alea.nextInt(j+1);
-							indexRestants.add(k, j);
+							indexRestants[j] = indexRestants[k];
+							indexRestants[k] = j;
 						}
 					}
 					j=0;
 					for (Biomorph biom : partenaires) {
-						gene = biom.genotype.get(iChrom,iGen);
-						jGen = indexRestants.get(j);
-						if (gene != null) enfants.get(jGen).genotype.get(iChrom).ajouterCopie(gene);
+						gene = biom.genotype.get(iChrom, iGen);
+						jGen = indexRestants[j];
+						if (gene != null)
+							enfants.get(jGen).genotype.get(iChrom).ajouterCopie(gene);
 						j++;
 					}
 				}

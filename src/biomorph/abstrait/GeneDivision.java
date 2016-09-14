@@ -29,7 +29,10 @@ public abstract class GeneDivision
 	protected transient GeneExpression<S1> lienGene1;
 	protected transient GeneExpression<S2> lienGene2;
 	/** position des gènes 1 et 2 dans le génotype du biomorph "cible"*/
-	protected char indexGene1,indexGene2,indexChromosome1,indexChromosome2;
+	public char indexGene1;
+	public char indexGene2;
+	public char indexChromosome1;
+	public char indexChromosome2;
 	/** transformations conditionnant l'expression des gènes 1 et 2*/
 	protected transient Transform<E,S1> transGene1;
 	protected transient Transform<E,S2> transGene2;

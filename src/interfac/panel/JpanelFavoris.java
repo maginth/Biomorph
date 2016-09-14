@@ -116,7 +116,7 @@ public class JpanelFavoris extends JPanel{
 	 * Lors de l'ajout, on ajoute à l'icône le menu, et la fonction de drag&drop.
 	 * @param bio le biomorph à ajouter.
 	 */
-	public void addBiomorph(final Biomorph bio){
+	public void addBiomorph(Biomorph bio){
 		if (bio != null){
 			if(!listeBiomorph.contains(bio)){
 				final IconBiomorph2D ico = (IconBiomorph2D) bio.getIcone(tailleIcone);
@@ -124,6 +124,11 @@ public class JpanelFavoris extends JPanel{
 				listeBiomorph.add(bio);
 				MouseListener popupListener = new PopUpListener(ico);
 				ico.addMouseListener(popupListener);
+				if (saveToFile) {
+					String nom = bio.getName();
+					bio = bio.duplique(new TauxMutation(0, 0, 0, 0));
+					bio.setName(nom);
+				}
 				DragDrop.ajouterDragable(ico, "bioPanel", ico.copie, bio);
 				add(ico);
 			}
@@ -146,8 +151,7 @@ public class JpanelFavoris extends JPanel{
 		for(int i=0;i<listeEnfant.size();i++){
 			addBiomorph(listeEnfant.get(i));
 		}
-		AppletBiomorph.getTabPan().setSelectedIndex(2);
-			
+		AppletBiomorph.getTabPan().setSelectedIndex(1);
 	}
 	
 	/**

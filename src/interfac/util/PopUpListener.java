@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
 
 import biomorph.forme2D.IconBiomorph2D;
 import interfac.global.AppletBiomorph;
-import interfac.panel.IconLaboratoire;
 
 /**
  * Création du menu pop-up accessible via clic droit sur un biomorph.
@@ -68,7 +67,10 @@ public class PopUpListener extends MouseAdapter{
 		supprimer.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0){
 				if(icone.getParent().toString().contains("PanelLaboratoire")){
-					((IconLaboratoire) icone).supprimer();
+					if (AppletBiomorph.getLab().getListeIcoSelection().contains(icone))
+						AppletBiomorph.getLab().videSelection();
+					else
+						icone.supprimer();
 					AppletBiomorph.getLab().actualiserVue();
 				}
 				else if(icone.getParent().toString().contains("JpanelFavoris")){

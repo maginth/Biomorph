@@ -270,7 +270,7 @@ public class GeneDivisionLimite
 			int c1 = transformCouleur(4,couleur1);
 			int c2 = transformCouleur(4,couleur2);
 			
-			Similitude trans1 = sens1? 
+			Similitude trans1 = sens1?
 				new Similitude(0, 0, px, py, direct1, c1)
 				:new Similitude(px, py, -px, -py, direct1, c1);
 			Similitude trans2 = sens2?
@@ -290,6 +290,10 @@ public class GeneDivisionLimite
 			limite2 = 1/((Similitude) transGene2).norme;
 			
 			finalise =true;
+			if (lienGene1 == null)
+				lienGene1 = GeneVide.genVide;
+			if (lienGene2 == null)
+				lienGene2 = GeneVide.genVide;
 			lienGene1.finaliser(biom);
 			lienGene2.finaliser(biom);
 		}
@@ -419,6 +423,9 @@ public class GeneDivisionLimite
 	 * @param trans
 	 */
 	//private int colour = 0xff000000 | Biomorph.alea.nextInt();
+	final transient static double sqrt12 = Math.sqrt(0.5);
+	//public static int black_pixel = 1;
+	//public static int collision = 1;
 	
 	public void expressionOptimise(Similitude trans) {
 		//System.out.println("début expres opt");
@@ -435,7 +442,7 @@ public class GeneDivisionLimite
 			if (intersection == 2) testRect = false; 
 			else if (intersection == 0) return;
 		}
-		if (echelle>taillePrecalcul) {
+		if (echelle>taillePrecalcul * (enregistrer ? 1 : sqrt12)) {
 			if (System.currentTimeMillis()>500+Biomorph2D.temps) return;
 			Similitude transp;
 			transp = transGene1.concat(trans);
@@ -487,7 +494,8 @@ public class GeneDivisionLimite
 			//System.out.println("\t fin enrg. expres opt");
 		} else {
 			//System.out.println("\t restitutuin expres opt");
-			int c,m,imax = pointsMax[kmax],
+			kmax += 4;
+			int c,c2,m,imax = pointsMax[kmax],
 			w = cible.widthPixels; 
 			for(i=0;i<imax;i++){
 				x = pointsPrecalcules[2*i];
@@ -497,7 +505,13 @@ public class GeneDivisionLimite
 				if(j<cible.fin) { //&& cible.pixels[j] == 0) {
 				c = trans.color+couleursPrecalcules[i];
 				m = c & 0x01010100;
-				cible.pixels[j] =0xff000000 | ((((c^(m-(m>>8)))&0xfefefe)+(cible.pixels[j]&0xfefefe))>>1);
+				c = c^(m-(m>>8));
+				c2 = cible.pixels[j];
+				/*if (c2 == 0)
+					black_pixel++;
+				else
+					collision++;*/
+				cible.pixels[j] =0x80000000 | (c2 == 0 ? c : (((c&0xfefefe)+(c2&0xfefefefe))>>1));
 				//cible.pixels[j] = colour;
 				//Biomorph2D.count1++;
 				} 
@@ -558,7 +572,7 @@ public class GeneDivisionLimite
 	}
 	
 	public void desoptimiser() {
-		System.out.println("DESOPTIMISE ");
+		//System.out.println("DESOPTIMISE ");
 		pointsPrecalcules = null;
 		couleursPrecalcules = null;
 		pointsMax = null;
