@@ -10,8 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -46,7 +46,8 @@ public class PanelLaboratoire extends JPanel{
 	protected ImageAccessible arrierePlan; 
 	private final JLabel arrierePlanComponent;
 	private final ImageIcon arrierePlanIcon;
-	private static final Pattern zoomRegex = Pattern.compile("(0\\.0*[1-9]{1,2})|(.\\.[^0])|([1-9][0-9]*)");
+	PopUpListener popUpListener;
+	//private static final Pattern zoomRegex = Pattern.compile("(0\\.0*[1-9]{1,2})|(.\\.[^0])|([1-9][0-9]*)");
 
 	public boolean jtextVisible = true;
 	JPanel cadreSelection; 
@@ -80,6 +81,8 @@ public class PanelLaboratoire extends JPanel{
 				redimension();
 			}
 		});
+		popUpListener = new PopUpListener(null);
+		addMouseListener(popUpListener);
 		addMouseListener(vueLab);
 		addMouseMotionListener(vueLab);
 		addMouseWheelListener(new MouseWheelListener(){
@@ -97,8 +100,8 @@ public class PanelLaboratoire extends JPanel{
 					zoom *= Xzoom;
 					actualiserVue();
 					count = 0;
-					Matcher match = zoomRegex.matcher(Double.toString(zoom*1.0000001d));
-					match.find();
+					//Matcher match = zoomRegex.matcher(Double.toString(zoom*1.0000001d));
+					//match.find();
 					//System.out.println("ZOOM "+match.group());
 				}
 			}
@@ -203,13 +206,19 @@ public class PanelLaboratoire extends JPanel{
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
+			x0 = e.getX(); y0 = e.getY();
+			popUpListener.setIcon(null);
+			for (IconLaboratoire ico : listeIco) {
+				int l = ico.largeur() / 2, dx = ico.getX() + l - x0, dy = ico.getY() + l - y0;
+				if (dx * dx + dy * dy < l * l)
+					popUpListener.setIcon(ico);
+			}
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				p0 = e.getLocationOnScreen();
 				xVue0=xVue;yVue0=yVue;
 			} else if(SwingUtilities.isRightMouseButton(e)){
 				noDragRightClick = true;
 				deselectTout();
-				x0 = e.getX(); y0 = e.getY();
 				cadreSelection.setLocation(x0,y0);
 				cadreSelection.setVisible(true);
 				cadreSelection.setSize(0,0);

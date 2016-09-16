@@ -104,8 +104,13 @@ public class PopUpListener extends MouseAdapter{
 	/**
 	 * Affiche le menu pop-up
 	 */
+	
+	public void setIcon(IconBiomorph2D icone) {
+		iconeBiomorph = icone;
+	}
+	
 	public void mouseReleased(MouseEvent e){
-		if(SwingUtilities.isRightMouseButton(e)){
+		if(SwingUtilities.isRightMouseButton(e) && iconeBiomorph != null){
 			icone = iconeBiomorph;
 			popupMenuBiomorph.show(e.getComponent(), e.getX(), e.getY());	
 		}
@@ -117,7 +122,7 @@ public class PopUpListener extends MouseAdapter{
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e))
+		if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && iconeBiomorph != null)
 			AppletBiomorph.getArbre().centrerSurBiomorph(iconeBiomorph.getBiomorph());
 	}
 	

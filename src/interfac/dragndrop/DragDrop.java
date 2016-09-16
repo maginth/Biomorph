@@ -166,26 +166,27 @@ public class DragDrop {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				e.getComponent().removeMouseMotionListener(this);
 				e.getComponent().removeMouseMotionListener(startDrag);
-				
-				for (Component comp : listeDrag) {
-					PropDrag prop = lienCompProp.get(comp);
-					if (prop != null) {
-						Rectangle repaintRect = comp.getBounds();
-						if (prop.parentDepart != null) {
-							prop.pointFin = comp.getLocation();
-							SwingUtilities.convertPointToScreen(prop.pointFin, panPointeur);
-							if (prop.parentDepart.getLayout()==null) comp.setLocation(prop.positionDepart);
-							try {
-								prop.parentDepart.add(comp,prop.indexDepart);
-							} catch(Exception except) {
-								prop.parentDepart.add(comp);
-							}
-						} else
-							panPointeur.remove(comp);
-						panPointeur.repaint(repaintRect);
-						prop.parentDepart = null;
+
+				if (lienCompProp != null)
+					for (Component comp : listeDrag) {
+						PropDrag prop = lienCompProp.get(comp);
+						if (prop != null) {
+							Rectangle repaintRect = comp.getBounds();
+							if (prop.parentDepart != null) {
+								prop.pointFin = comp.getLocation();
+								SwingUtilities.convertPointToScreen(prop.pointFin, panPointeur);
+								if (prop.parentDepart.getLayout()==null) comp.setLocation(prop.positionDepart);
+								try {
+									prop.parentDepart.add(comp,prop.indexDepart);
+								} catch(Exception except) {
+									prop.parentDepart.add(comp);
+								}
+							} else
+								panPointeur.remove(comp);
+							panPointeur.repaint(repaintRect);
+							prop.parentDepart = null;
+						}
 					}
-				}
 				
 				if (actionFocus != null ) {
 					actionFocus.mouseReleased(e);

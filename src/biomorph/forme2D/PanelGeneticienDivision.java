@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -58,8 +59,7 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 	
 	
 	
-	public PanelGeneticienDivision(GeneDivisionLimite gene){
-		this(gene.getIndex()[0]);
+	void initGene(GeneDivisionLimite gene) {
 		this.gene = gene;
 		couleur1 = gene.couleur1;
 		couleur2 = gene.couleur2;
@@ -73,6 +73,11 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 		this.gen1 = (char) liens[1];
 		this.chr2 = (char) liens[2];
 		this.gen2 = (char) liens[3];
+	}
+	
+	public PanelGeneticienDivision(GeneDivisionLimite gene){
+		this(gene.getIndex()[0]);
+		initGene(gene);
 		actualiseCouleur();
 		actualise();
 	}
@@ -271,11 +276,19 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 						int hem = hemisphere_link;
 						mouseAdapter.mouseExited(lastEvent);
 						boolean is1 = hem == 0;
-						if (hem == 0)
-							gen1 += e.getUnitsToScroll() < 0 ? 1 : -1;
-						else
-							gen2 += e.getUnitsToScroll() < 0 ? 1 : -1;
+						if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
+							if (hem == 0)
+								gen1 += e.getUnitsToScroll() < 0 ? 1 : -1;
+							else
+								gen2 += e.getUnitsToScroll() < 0 ? 1 : -1;
+						} else {
+							if (hem == 0)
+								chr1 += e.getUnitsToScroll() < 0 ? 1 : -1;
+							else
+								chr2 += e.getUnitsToScroll() < 0 ? 1 : -1;
+						}
 						modif();
+						initGene(gene);
 						panLink[hem] = getPanAt(is1 ? chr1 : chr2, is1 ? gen1 : gen2);
 						mouseAdapter.mouseEntered(lastEvent);
 						mouseAdapter.mouseMoved(lastEvent);
@@ -336,9 +349,9 @@ public class PanelGeneticienDivision extends PanelGeneticien {
 		return res instanceof PanelGeneticienDivision ? (PanelGeneticienDivision)res : noLink;
 	}
 	
-	@Override 
-	protected void paintChildren(Graphics g) {
-		super.paintChildren(g);
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
 		Graphics2D graph = (Graphics2D) g;
 		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		graph.setColor(disk_color);

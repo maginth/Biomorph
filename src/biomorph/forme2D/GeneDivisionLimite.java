@@ -256,6 +256,8 @@ public class GeneDivisionLimite
 	public void finaliser(Biomorph biom) {
 		if (!finalise) {
 			cible = (Biomorph2D) biom;
+			indexChromosome1 %= cible.genotype.size();
+			indexChromosome2 %= cible.genotype.size();
 			indexGene1 %= cible.genotype.get(indexChromosome1).size();
 			indexGene2 %= cible.genotype.get(indexChromosome2).size();
 			super.finaliser(biom);

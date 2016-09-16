@@ -282,13 +282,17 @@ public class Genealogie extends JPanel {
 	
 	private static Biomorph genererParent(int niveau,BioGenerator rand) {
 		Biomorph res;
-		if (Biomorph.alea.nextFloat()*niveau<1 && niveau <5) res = genererParent(niveau+1,rand).croisement(genererParent(niveau+1,rand), Parametres.X);
+		if (Biomorph.alea.nextFloat()*niveau<1 && niveau <5)
+			res = genererParent(niveau+1,rand).croisement(genererParent(niveau+1,rand), Parametres.X);
 		else res = rand.biomorphAleatoire();
 		return res;
 	}
 	
 	private static void genererEnfants(int niveau,Biomorph bio,BioGenerator rand) {
-		while (Biomorph.alea.nextFloat()*niveau<0.8 && niveau <5) {
+		if (niveau >= 5)
+			return;
+		int number = (int)(4 + Biomorph.alea.nextGaussian() * 3 - niveau);
+		while (number-- > 0) {
 			genererEnfants(niveau+1,bio.croisement(rand.biomorphAleatoire(), Parametres.X), rand);
 		}
 	}

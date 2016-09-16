@@ -35,10 +35,6 @@ public class ColorPicker extends JLabel {
 		public void rightClick();
 	}
 	
-	public void drawColorPicker() {
-		
-	}
-	
 	public void pickColorAt(int x, int y) {
 		picX = x;
 		picY = y;
@@ -46,6 +42,8 @@ public class ColorPicker extends JLabel {
 		float v = (x - x2 - 2 * sqr3_2 * (y - y2)) / (3 * r_in);
 		if (v > 1.0f)
 			v = 1.0f;
+		if (s < 0)
+			s = 0;
 		color = Color.getHSBColor(hue, s, v);
 		if (callback != null)
 			callback.changeColor(color);

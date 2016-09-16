@@ -3,6 +3,7 @@ package interfac.global;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,7 @@ import biomorph.forme2D.PanelGenome;
 import interfac.panel.Genealogie;
 import interfac.panel.JpanelFavoris;
 import interfac.panel.PanelLaboratoire;
+import interfac.util.ColorPicker;
 import interfac.util.IO;
 import interfac.util.ScrollVerticalLayout;
 
@@ -209,6 +211,29 @@ public class AppletBiomorph extends JApplet {
 		
 		JScrollPane scrollpane1 = new JScrollPane(PanFavoris);
 		JScrollPane scrollpane2 = new JScrollPane(panCroisement);
+		final JPanel panPrefInside = new JPanel();
+		ColorPicker colorPicker = new ColorPicker(256);
+		colorPicker.centerColor(panelLaboratoire.getBackground().getRGB());
+		colorPicker.callback = new ColorPicker.Callback() {
+			@Override
+			public void rightClick() {}
+			@Override
+			public void changeColor(Color color) {
+				panelLaboratoire.setBackground(color);
+			}
+		};
+		panPrefInside.setLayout(new ScrollVerticalLayout());
+		@SuppressWarnings("serial")
+		JLabel credits = new JLabel("<html><div style='text-align: center;'>credits :<br>Mathieu Guinin<br>math.guin@gmail.com</div></html>"){
+			   public Dimension getPreferredSize() {
+			       return new Dimension(panPrefInside.getWidth()-10, 60);
+			   };
+			};
+		credits.setHorizontalAlignment(JLabel.CENTER);
+		credits.setFont(new Font("Sans Serif", Font.BOLD, 10));
+		panPrefInside.add(credits);
+		panPrefInside.add(colorPicker);
+		JScrollPane panPreference = new JScrollPane(panPrefInside);
 		scrollpane1.setBorder(null);
 		scrollpane2.setBorder(null);
 		
@@ -218,6 +243,7 @@ public class AppletBiomorph extends JApplet {
 		
 		tabbedPane.addTab( "Favoris", scrollpane1);
 		tabbedPane.addTab( "Croisement", scrollpane2);
+		tabbedPane.addTab( "Preference", panPreference);
 		
 		
 		tabbedPane.setBounds(0,400,300,300);
@@ -265,6 +291,7 @@ public class AppletBiomorph extends JApplet {
 		fermer.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				panelGenome.clearPanel();
 				panelLaboratoire.remove(fermer);
 				split2.setRightComponent(panelLaboratoire);
 			}

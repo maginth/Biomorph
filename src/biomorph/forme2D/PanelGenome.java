@@ -65,13 +65,7 @@ public class PanelGenome extends JPanel {
 	
 	
 	
-	
-	
-	public void bricolerGenome(Biomorph2D bio) {
-		
-		if (ColorPicker.colorPicker.callback != null)
-			ColorPicker.colorPicker.callback.rightClick();
-		this.biomorph = bio;
+	public void clearPanel() {
 		for (ChromPanel chrom : listeChrom) {
 			for(PanelGeneticien p : chrom.listeGene) {
 				remove(p);
@@ -80,6 +74,14 @@ public class PanelGenome extends JPanel {
 			while(chrom.listeGene.size()>0)
 				chrom.listeGene.remove(0);
 		}
+	}
+	
+	public void bricolerGenome(Biomorph2D bio) {
+		
+		if (ColorPicker.colorPicker.callback != null)
+			ColorPicker.colorPicker.callback.rightClick();
+		this.biomorph = bio;
+		clearPanel();
 		setVisible(true);
 		nombreChromosomes = biomorph.genotype.size();
 		
